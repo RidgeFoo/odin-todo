@@ -1,0 +1,24 @@
+{
+  "name": "odin-todo",
+  "version": "1.0.0",
+  "description": "Todo project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RidgeFoo/odin-todo.git"
+  },
+  "author": "RidgeFoo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RidgeFoo/odin-todo/issues"
+  },
+  "homepage": "https://github.com/RidgeFoo/odin-todo#readme",
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1"
+  }
+}

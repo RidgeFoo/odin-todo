@@ -2,7 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Go do!</title>
+    <title>GoDo</title>
+    <link rel="shortcut icon" href="./images/checked.png" type="image/x-icon" />
   </head>
-  <body></body>
+  <body>
+    <header>
+      <button id="add-task">Add task</button>
+    </header>
+    <nav>
+      <div id="nav-container">
+        <div id="quick-filters">
+          <div id="inbox" class="quick-filter">
+            <img src="./images/inbox-solid.svg" alt="inbox" />
+            <div class="quick-filter-label">Inbox</div>
+          </div>
+          <div id="today" class="quick-filter">
+            <img src="./images/calendar-day-solid.svg" alt="today" />
+            <div class="quick-filter-label">Today</div>
+          </div>
+          <div id="upcoming" class="quick-filter">
+            <img src="./images/calendar-days-solid.svg" alt="upcoming" />
+            <div class="quick-filter-label">Upcoming</div>
+          </div>
+        </div>
+        <div id="projects">
+          <button>Projects</button>
+        </div>
+      </div>
+    </nav>
+    <div id="main"></div>
+    <footer></footer>
+  </body>
 </html>

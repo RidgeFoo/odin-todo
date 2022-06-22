@@ -86,7 +86,8 @@ footer {
 }
 
 #add-task,
-#project-drop-down {
+#project-drop-down,
+.quick-filter {
   background-color: transparent;
   border: transparent;
   border-radius: 8px;
@@ -117,9 +118,11 @@ footer {
 #project-drop-down {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   padding: 5px 0px 5px 7px;
   border-radius: 5px;
+  text-transform: uppercase;
+  text-align: start;
 }
 
 #project-drop-down img {

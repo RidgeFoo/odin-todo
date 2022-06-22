@@ -4,6 +4,8 @@ import "../style.css";
 import Todo from "./todo.js";
 import "modern-css-reset";
 import PubSub from "./pubsub";
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
 
 Todo.addProject("myProject", "Red");
 
@@ -32,3 +34,5 @@ pubSub.subscribe("/addFavourite", (topic, args) => {
 
 // Publishing a new topic with args
 pubSub.publish("/addFavourite", ["test"]);
+
+tippy("[data-tippy-content]", { arrow: false, delay: [500, 200] });

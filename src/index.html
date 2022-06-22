@@ -7,7 +7,13 @@
   </head>
   <body>
     <header>
-      <button id="add-task">Add task</button>
+      <div class="logo-container">
+        <h1>GoDo</h1>
+        <img src="./images/check-solid.svg" alt="check" />
+      </div>
+      <button id="add-task" data-tippy-content="Add task">
+        <img src="./images/plus-solid.svg" alt="add" />
+      </button>
     </header>
     <nav>
       <div id="nav-container">
@@ -25,8 +31,11 @@
             <div class="quick-filter-label">Upcoming</div>
           </div>
         </div>
-        <div id="projects">
-          <button>Projects</button>
+        <div class="projects">
+          <div id="project-drop-down">
+            <img src="./images/chevron-right-solid.svg" alt="dropdown" />
+            <div id="project-label">Projects</div>
+          </div>
         </div>
       </div>
     </nav>

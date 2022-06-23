@@ -2,15 +2,16 @@ import svgCheck from "../../images/check-solid.svg";
 import svgPlus from "../../images/plus-solid.svg";
 import pubsub from "../app/pubsub.js";
 import tippy from "tippy.js";
+import storage from "./storage";
 
 const header = (function () {
-  function getHeaderElement() {
+  function createHeader() {
     const header = document.createElement("header");
-    header.append(getLogoElement(), getAddTaskElement());
+    header.append(createLogo(), createAddTask());
     return header;
   }
 
-  function getLogoElement() {
+  function createLogo() {
     const logoContainer = document.createElement("div");
     const title = document.createElement("h1");
     const imgLogo = document.createElement("img");
@@ -23,7 +24,7 @@ const header = (function () {
     return logoContainer;
   }
 
-  function getAddTaskElement() {
+  function createAddTask() {
     const btnAddTask = document.createElement("button");
     btnAddTask.id = "add-task";
     tippy(btnAddTask, { content: "Add Task", arrow: false, delay: [500, 200] });
@@ -33,13 +34,11 @@ const header = (function () {
 
     btnAddTask.append(imgPlus);
 
-    btnAddTask.addEventListener("click", () =>
-      pubsub.publish("/addTask", "The add task button was clicked")
-    );
+    btnAddTask.addEventListener("click", () => pubsub.publish("/addTask"));
     return btnAddTask;
   }
 
-  return getHeaderElement();
+  return createHeader();
 })();
 
 export default header;

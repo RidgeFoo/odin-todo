@@ -1,22 +1,12 @@
 import PubSub from "../app/pubsub";
 
 const storage = (function () {
-  const defaults = [{ name: "displayProjects", value: false }];
-
-  function getDefaultValue(name) {
-    return defaults.filter((x) => x.name === name)[0];
-  }
-
-  function populateStorage() {
+  function populateStorageWithDefaults(defaults) {
     defaults.forEach((x) => {
       if (!localStorage.getItem(x.name)) {
-        updateStorageValue(x.name, x.value);
+        localStorage.setItem(x.name, x.value);
       }
     });
-  }
-
-  function updateStorageValue(key, value) {
-    localStorage.setItem(key, value);
   }
 
   function toggleStorageValue(topic, key) {
@@ -28,11 +18,11 @@ const storage = (function () {
     localStorage.setItem(key, JSON.stringify(!currentValue));
   }
 
-  populateStorage();
-
   PubSub.subscribe("/toggleStorageValue", toggleStorageValue);
 
-  return getDefaultValue;
+  return { populateStorageWithDefaults };
+
+  // Maybe put the serialisation logic in here for projects and tasks?
 })();
 
 export default storage;

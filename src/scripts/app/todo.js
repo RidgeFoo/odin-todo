@@ -15,7 +15,7 @@ const Todo = (function () {
   }
 
   function removeProject(project) {
-    // remove the project somehow from the array
+    _projects = _projects.filter((x) => x !== project);
   }
 
   return {

@@ -12,8 +12,10 @@ const sidebar = (function () {
     { name: "upcoming", svg: svgUpcoming, topic: "/filterUpcoming" },
   ];
 
+  const dropDownChevronID = "drop-down-chevron";
+
   function selectDropDownChevron() {
-    return document.getElementById("drop-down-chevron");
+    return document.getElementById(dropDownChevronID);
   }
 
   function createNav() {
@@ -87,7 +89,7 @@ const sidebar = (function () {
   function createDropDownChevron() {
     // Based on whether the user last toggled to display the projects we should use the that value
     const img = document.createElement("img");
-    img.id = "drop-down-chevron";
+    img.id = dropDownChevronID;
     const displayProjects = JSON.parse(localStorage.getItem("displayProjects"));
     img.src = displayProjects ? svgChevronDown : svgChevronRight;
     return img;
@@ -101,6 +103,10 @@ const sidebar = (function () {
 
   function setDropDownChevron() {
     selectDropDownChevron().replaceWith(createDropDownChevron());
+  }
+
+  function toggleProjecst() {
+    // Display the projects if the toggle value is set appropriately
   }
 
   PubSub.subscribe("/toggleProjects", toggleProjectsDropDown);

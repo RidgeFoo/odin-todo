@@ -1,10 +1,9 @@
 import Task from "./task";
 
-export default function Project(name, colour, tasks) {
+export default function Project(name, tasks) {
   // We need to rebuild projects and their methods from data held in the LocalStorage
   let _name = name;
-  let _colour = colour;
-  const _tasks = tasks ? tasks : [];
+  let _tasks = typeof tasks === Array ? tasks : [];
 
   function getName() {
     return _name;
@@ -33,7 +32,6 @@ export default function Project(name, colour, tasks) {
   function toJSON() {
     return JSON.stringify({
       name: _name,
-      colour: _colour,
       tasks: _tasks.map((task) => task.getTaskDetails()),
     });
   }

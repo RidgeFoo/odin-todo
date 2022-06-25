@@ -2,8 +2,13 @@ import PubSub from "../app/pubsub";
 
 export default (function () {
   const modal = document.createElement("dialog");
+  const form = document.createElement("form");
 
-  function setupModal() {
+  function toggleModal() {
+    modal.open ? modal.close() : modal.showModal();
+  }
+
+  function populateModal() {
     modal.append(createTaskForm());
   }
 
@@ -137,23 +142,24 @@ export default (function () {
   }
 
   function createTaskForm() {
-    const form = document.createElement("form");
-
-    form.addEventListener("change", () => toggleAddTaskButtonColour(form));
+    form.setAttribute("method", "POST");
+    form.addEventListener("change", () => toggleAddTaskButtonColour());
 
     form.append(createTaskInput(), createTaskProperties(), createFormButtons());
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      if (form.checkValidity()) toggleModal();
+      if (form.checkValidity()) {
+        sendFormData();
+        toggleModal();
+      }
     });
 
     return form;
   }
 
-  function toggleAddTaskButtonColour(form) {
+  function toggleAddTaskButtonColour() {
     const button = document.querySelector("#btn-add-task");
-    console.log("form check");
 
     if (form.checkValidity()) {
       button.classList.add("form-valid");
@@ -163,11 +169,12 @@ export default (function () {
     }
   }
 
-  function toggleModal() {
-    modal.open ? modal.close() : modal.showModal();
+  function sendFormData() {
+    const formData = Object.fromEntries(new FormData(form));
+    PubSub.publish("/createTask", formData);
   }
 
-  setupModal();
+  populateModal();
   PubSub.subscribe("/addTask", toggleModal);
 
   return modal;

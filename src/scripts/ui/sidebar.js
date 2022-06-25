@@ -105,7 +105,7 @@ const sidebar = (function () {
     selectDropDownChevron().replaceWith(createDropDownChevron());
   }
 
-  function toggleProjecst() {
+  function toggleProjects() {
     // Display the projects if the toggle value is set appropriately
   }
 

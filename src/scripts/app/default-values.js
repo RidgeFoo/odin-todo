@@ -7,7 +7,7 @@ export default (function () {
     { name: "displayProjects", value: false },
     {
       name: "projects",
-      value: Project("Inbox", "Blue", [
+      value: Project("Inbox", [
         Task("Default Task", "2022-12-31", "Low"),
       ]).toJSON(),
     },

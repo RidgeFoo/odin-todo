@@ -18,6 +18,10 @@ const Todo = (function () {
     _projects = _projects.filter((x) => x !== project);
   }
 
+  function addTask() {
+    //
+  }
+
   return {
     addProject,
     getProjects,

@@ -150,4 +150,70 @@ dialog {
 dialog form {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+form input[type="text"] {
+  outline: none;
+  border: none;
+}
+
+#modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: end;
+}
+
+#modal-buttons button {
+  width: 80px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 5px;
+  padding: 8px 12px 8px 12px;
+}
+
+#btn-cancel {
+  background-color: rgb(245, 245, 245);
+  border: none;
+  color: rgb(68, 68, 68);
+  cursor: pointer;
+}
+
+#btn-add-task {
+  border: none;
+  color: white;
+}
+
+.form-invalid {
+  background-color: rgba(219, 76, 63, 0.4);
+  cursor: not-allowed;
+}
+
+.form-valid {
+  background-color: rgb(219, 76, 63);
+  cursor: pointer;
+}
+
+#modal-task-properties {
+  display: flex;
+  gap: 10px;
+}
+
+.task-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-property label {
+  font-weight: 300;
+  font-size: 12px;
+  color: rgb(128, 128, 128);
+}
+
+.task-property input,
+.task-property select {
+  width: 150px;
+  height: 100%;
+  font-size: 14px;
+  cursor: pointer;
 }

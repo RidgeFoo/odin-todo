@@ -36,7 +36,7 @@ const PubSub = (function () {
     // In the topics object we now have a key for the topic name.
     // In the array of the topic we add an object with the token and function to call
     topics[topic].push({ token, func });
-    return token;
+    // return token;
   }
 
   return {

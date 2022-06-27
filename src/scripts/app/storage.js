@@ -1,4 +1,4 @@
-import PubSub from "../app/pubsub";
+import PubSub from "./pubsub";
 
 const storage = (function () {
   function populateStorageWithDefaults(defaults) {

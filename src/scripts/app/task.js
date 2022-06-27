@@ -8,7 +8,6 @@ export default function Task(taskTitle, dueDate, priority) {
   }
 
   function setTitle(taskTitle) {
-    // TODO: add validations?
     _title = taskTitle;
     return _title;
   }
@@ -22,13 +21,11 @@ export default function Task(taskTitle, dueDate, priority) {
   }
 
   function setDueDate(dueDate) {
-    // TODO: add validations?
     _dueDate = dueDate;
     return _dueDate;
   }
 
   function setPriority(priority) {
-    // TODO: add validations?
     _priority = priority;
     return priority;
   }

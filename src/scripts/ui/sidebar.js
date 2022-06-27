@@ -43,19 +43,18 @@ const sidebar = (function () {
     return quickFilterContainer;
   }
 
-  function createQuickFilter(name, svgPath, topic) {
+  function createQuickFilter(name, svg, topic) {
     const quickFilter = document.createElement("button");
     quickFilter.className = "quick-filter";
     quickFilter.id = name;
 
-    const img = document.createElement("img");
-    img.src = svgPath;
+    quickFilter.insertAdjacentHTML("afterbegin", svg);
 
     const label = document.createElement("span");
     label.textContent = name;
     label.className = "quick-filter-label";
 
-    quickFilter.append(img, label);
+    quickFilter.append(label);
     quickFilter.addEventListener("click", () =>
       PubSub.publish(topic, `The ${name} button was clicked!`)
     );
@@ -88,11 +87,14 @@ const sidebar = (function () {
 
   function createDropDownChevron() {
     // Based on whether the user last toggled to display the projects we should use the that value
-    const img = document.createElement("img");
-    img.id = dropDownChevronID;
+    const div = document.createElement("div");
+    div.id = dropDownChevronID;
     const displayProjects = JSON.parse(localStorage.getItem("displayProjects"));
-    img.src = displayProjects ? svgChevronDown : svgChevronRight;
-    return img;
+    div.insertAdjacentHTML(
+      "afterbegin",
+      displayProjects ? svgChevronDown : svgChevronRight
+    );
+    return div;
   }
 
   function toggleProjectsDropDown() {

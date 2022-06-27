@@ -1,7 +1,6 @@
 import "modern-css-reset";
 import "../style.css";
 import "tippy.js/dist/tippy.css";
-import storage from "./ui/storage";
 import html from "../index.html";
 import PubSub from "./app/pubsub";
 import defaults from "./app/default-values";
@@ -10,24 +9,13 @@ import Todo from "./app/todo";
 import header from "./ui/header";
 import sidebar from "./ui/sidebar";
 import modal from "./ui/modal-task";
+import tasks from "./ui/tasks";
 
 const body = document.querySelector("body");
-body.append(header, sidebar, modal);
-
-// Todo.addProject("myProject");
-
-// const projectOne = Todo.getProjects()[0];
-
-// projectOne.addTask("myTask", "2021-01-01", "Low");
-// const taskOne = projectOne.getTasks()[0];
-
-// console.log(`Project Name: ${projectOne.getName()}`);
-// console.log(`Task name: ${taskOne.getTitle()}`);
-// console.log(taskOne.getTaskDetails());
+body.append(header, sidebar, tasks, modal);
 
 // PubSub.subscribe("/addTask", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterInbox", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterToday", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterUpcoming", (topic, args) => console.log(topic, args));
-
 PubSub.subscribe("/createTask", (topic, args) => console.log(topic, args));

@@ -25,8 +25,8 @@ export default function Project(name, tasks) {
   }
 
   function removeTask(task) {
-    // somehow select the right task to remove - task is likely to be an object
-    return;
+    _tasks = _tasks.filter((x) => x !== task);
+    return task;
   }
 
   function toJSON() {

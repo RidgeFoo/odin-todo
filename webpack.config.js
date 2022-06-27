@@ -27,9 +27,10 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.(png|jpg|jpeg|svg)$/i,
+        test: /\.(png|jpg|jpeg)$/i,
         type: "asset/resource",
       },
+      { test: /\.svg$/i, type: "asset/source" },
       {
         test: /\.html$/i,
         loader: "html-loader",

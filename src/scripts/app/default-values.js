@@ -1,4 +1,4 @@
-import storage from "../ui/storage";
+import storage from "./storage";
 import Project from "../app/project";
 import Task from "../app/task";
 

@@ -38,7 +38,7 @@ header {
   font-size: 24px;
 }
 
-.logo-container img {
+.logo-container svg {
   height: 24px;
 }
 
@@ -100,13 +100,14 @@ footer {
   padding: 4px;
   width: 28px;
   height: 28px;
+  fill: white;
 }
 
 #add-task:hover {
   background-color: var(--header-bg-color-hover);
 }
 
-#nav-container img {
+#nav-container svg {
   width: 18px;
 }
 
@@ -125,7 +126,7 @@ footer {
   text-align: start;
 }
 
-#project-drop-down img {
+#project-drop-down svg {
   height: 18px;
 }
 
@@ -216,4 +217,34 @@ form input[type="text"] {
   height: 100%;
   font-size: 14px;
   cursor: pointer;
+}
+
+#tasks {
+  grid-template-columns: 2/3;
+  grid-template-rows: 2/3;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  padding-top: 36px;
+  padding-left: 55px;
+  padding-right: 55px;
+}
+
+#tasks h1 {
+  padding-bottom: 34px;
+}
+
+#tasks-add-task {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 5px;
+}
+
+#tasks-add-task:hover {
+}
+
+#tasks-add-task svg {
+  width: 24px;
+  height: 24px;
+  fill: red;
 }

@@ -1,4 +1,5 @@
 import svgAdd from "../../images/plus-solid.svg";
+import PubSub from "../app/pubsub";
 
 const tasks = (function () {
   function setupTasksContainer() {
@@ -19,6 +20,8 @@ const tasks = (function () {
     button.insertAdjacentHTML("afterbegin", svgAdd);
 
     button.append(label);
+
+    button.addEventListener("click", () => PubSub.publish("/addTask"));
 
     return button;
   }

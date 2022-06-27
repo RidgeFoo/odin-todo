@@ -6,7 +6,6 @@ const PubSub = (function () {
 
   function publish(topic, args) {
     // If nothing is subscribed to the topic then do nothing
-    console.log(topics[topic]);
     if (!topics[topic]) return false;
 
     // If there are subscribers to the topic then

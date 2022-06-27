@@ -240,7 +240,7 @@ form input[type="text"] {
   align-items: center;
   gap: 5px;
   fill: var(--header-bg-primary);
-  font-size: 14px;
+  font-size: 16px;
   border: none;
   background: none;
   color: var(--color-light-grey);
@@ -248,12 +248,12 @@ form input[type="text"] {
 }
 
 #tasks-add-task > svg {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
 }
 
-#tasks-add-task:hover {
-  fill: var(--color-light-grey);
-  outline: 1px solid var(--header-bg-primary);
+#tasks-add-task:hover > svg {
+  background-color: red;
+  fill: white;
 }

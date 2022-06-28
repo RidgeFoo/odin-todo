@@ -18,8 +18,8 @@ export default function Project(name, tasks) {
     return _tasks;
   }
 
-  function addTask(title, dueDate, priority) {
-    const newTask = Task(title, dueDate, priority);
+  function addTask(title, dueDate, priority, taskIndex) {
+    const newTask = Task(title, dueDate, priority, taskIndex);
     _tasks.push(newTask);
     return newTask;
   }

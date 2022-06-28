@@ -29,7 +29,7 @@ const header = (function () {
 
     btnAddTask.innerHTML = svgPlus;
 
-    btnAddTask.addEventListener("click", () => pubsub.publish("/addTask"));
+    btnAddTask.addEventListener("click", () => pubsub.publish("/taskModal"));
     return btnAddTask;
   }
 

@@ -12,10 +12,8 @@ const sidebar = (function () {
     { name: "upcoming", svg: svgUpcoming, topic: "/filterUpcoming" },
   ];
 
-  const dropDownChevronID = "drop-down-chevron";
-
   function selectDropDownChevron() {
-    return document.getElementById(dropDownChevronID);
+    return document.querySelector("#project-drop-down > svg");
   }
 
   function createNav() {
@@ -75,10 +73,11 @@ const sidebar = (function () {
     dropDown.id = "project-drop-down";
 
     const label = document.createElement("span");
-    label.id = "project-label";
+    label.className = "project-label";
     label.textContent = "Projects";
 
-    dropDown.append(createDropDownChevron(), label);
+    dropDown.insertAdjacentHTML("afterbegin", createDropDownChevron());
+    dropDown.appendChild(label);
 
     dropDown.addEventListener("click", toggleProjectsDropDown);
 
@@ -87,14 +86,8 @@ const sidebar = (function () {
 
   function createDropDownChevron() {
     // Based on whether the user last toggled to display the projects we should use the that value
-    const div = document.createElement("div");
-    div.id = dropDownChevronID;
     const displayProjects = JSON.parse(localStorage.getItem("displayProjects"));
-    div.insertAdjacentHTML(
-      "afterbegin",
-      displayProjects ? svgChevronDown : svgChevronRight
-    );
-    return div;
+    return displayProjects ? svgChevronDown : svgChevronRight;
   }
 
   function toggleProjectsDropDown() {
@@ -104,7 +97,7 @@ const sidebar = (function () {
   }
 
   function setDropDownChevron() {
-    selectDropDownChevron().replaceWith(createDropDownChevron());
+    selectDropDownChevron().innerHTML = createDropDownChevron();
   }
 
   function toggleProjects() {

@@ -3,21 +3,9 @@ export default function Task(taskTitle, dueDate, priority) {
   let _dueDate = dueDate;
   let _priority = priority;
 
-  function getTitle() {
-    return _title;
-  }
-
   function setTitle(taskTitle) {
     _title = taskTitle;
     return _title;
-  }
-
-  function getDueDate() {
-    return _dueDate;
-  }
-
-  function getPriority() {
-    return _priority;
   }
 
   function setDueDate(dueDate) {
@@ -32,18 +20,15 @@ export default function Task(taskTitle, dueDate, priority) {
 
   function getTaskDetails() {
     return {
-      title: getTitle(),
-      dueDate: getDueDate(),
-      priority: getPriority(),
+      title: _title,
+      dueDate: _dueDate,
+      priority: _priority,
     };
   }
 
   return {
-    getTitle,
     setTitle,
-    getPriority,
     setPriority,
-    getDueDate,
     setDueDate,
     getTaskDetails,
   };

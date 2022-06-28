@@ -175,7 +175,7 @@ export default (function () {
   }
 
   populateModal();
-  PubSub.subscribe("/addTask", toggleModal);
+  PubSub.subscribe("/taskModal", toggleModal);
 
   return modal;
 })();

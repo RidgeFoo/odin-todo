@@ -11,6 +11,8 @@ import sidebar from "./ui/sidebar";
 import modal from "./ui/modal-task";
 import tasks from "./ui/tasks";
 
+window.Todo = Todo;
+
 const body = document.querySelector("body");
 body.append(header, sidebar, tasks, modal);
 

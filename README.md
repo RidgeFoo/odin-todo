@@ -32,3 +32,45 @@
 - [ ] Delete a task
 - [ ] Edit a task
 - [ ] Delete a project
+- [ ] Tasks title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
+
+## Storing the data in local storage
+
+Below is an example of how the project and task data will be held in local storage
+
+```json
+{
+  "projects": [
+    {
+      "name": "Inbox",
+      "tasks": [
+        {
+          "name": "Task 1",
+          "dueDate": "2020-01-01",
+          "priority": "Low"
+        },
+        {
+          "name": "Task 2",
+          "dueDate": "2020-01-02",
+          "priority": "Low"
+        }
+      ]
+    },
+    {
+      "name": "Work",
+      "tasks": [
+        {
+          "name": "Work 1",
+          "dueDate": "2022-01-01",
+          "priority": "High"
+        },
+        {
+          "name": "Work 2",
+          "dueDate": "2022-04-01",
+          "priority": "High"
+        }
+      ]
+    }
+  ]
+}
+```

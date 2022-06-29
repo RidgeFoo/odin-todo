@@ -104,6 +104,10 @@ const sidebar = (function () {
     // Display the projects if the toggle value is set appropriately
   }
 
+  function renderProjects(projects) {
+    // Take a list of projects and use that to render the projects???
+  }
+
   PubSub.subscribe("/toggleProjects", toggleProjectsDropDown);
 
   return createNav();

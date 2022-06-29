@@ -14,9 +14,8 @@ import tasks from "./ui/tasks";
 window.Todo = Todo;
 
 const body = document.querySelector("body");
-body.append(header, sidebar, tasks, modal);
+body.append(header, sidebar, tasks(Todo.getAllTasks()), modal);
 
 PubSub.subscribe("/filterInbox", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterToday", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterUpcoming", (topic, args) => console.log(topic, args));
-PubSub.subscribe("/createTask", (topic, args) => console.log(topic, args));

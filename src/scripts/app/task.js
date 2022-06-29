@@ -1,7 +1,9 @@
-export default function Task(taskTitle, dueDate, priority) {
+// Factory function
+export default function Task(taskTitle, dueDate, priority, isDone) {
   let _title = taskTitle;
   let _dueDate = dueDate;
   let _priority = priority;
+  let _isDone = isDone || false;
 
   function setTitle(taskTitle) {
     _title = taskTitle;
@@ -18,11 +20,16 @@ export default function Task(taskTitle, dueDate, priority) {
     return priority;
   }
 
+  function toggleComplete() {
+    _isDone = !_isDone;
+  }
+
   function getTaskDetails() {
     return {
-      title: _title,
-      dueDate: _dueDate,
-      priority: _priority,
+      taskTitle: _title,
+      taskDueDate: _dueDate,
+      taskPriority: _priority,
+      taskIsDone: _isDone,
     };
   }
 
@@ -30,6 +37,7 @@ export default function Task(taskTitle, dueDate, priority) {
     setTitle,
     setPriority,
     setDueDate,
+    toggleComplete,
     getTaskDetails,
   };
 }

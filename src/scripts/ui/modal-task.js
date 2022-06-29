@@ -161,7 +161,9 @@ export default (function () {
   function toggleAddTaskButtonColour() {
     const button = document.querySelector("#btn-add-task");
 
+    // I know I could do this in a better way!
     if (form.checkValidity()) {
+      button.classList.remove("form-invalid");
       button.classList.add("form-valid");
     } else {
       button.classList.remove("form-valid");

@@ -1,17 +1,19 @@
 // import Sherlock from "sherlockjs";
 import Project from "./project";
 import PubSub from "./pubsub";
+import dummyData from "./dummy-data.json";
 
 const Todo = (function () {
-  // Prevents projects with the same name being added
+  // Use an object to prevent projects with the same name being added
   const _projects = {};
 
-  function addProject(name) {
+  function addProject(name, tasks) {
+    // tasks is optional really
     if (name in _projects) return;
-    _projects[name] = Project(name);
+    _projects[name] = Project(name, tasks);
   }
 
-  function getProjects() {
+  function getProjectsAll() {
     return _projects;
   }
 
@@ -30,33 +32,47 @@ const Todo = (function () {
     return task;
   }
 
-  function getAllTaskDetails() {
+  function getAllTasks() {
     // Gets tasks from all projects
-    const tasks = Object.values(_projects)
-      .map((project) => project.getTasks())
+    return Object.values(_projects)
+      .map((project) => project.getTaskDetailsAll())
       .flat();
-    return tasks.map((task) => task.getTaskDetails());
   }
 
-  // Need to think about this a bit more
-  function removeTask(projectName, index) {}
+  function removeTask(projectName, index) {
+    // Need to think about this a bit more
+  }
 
   /* Function that handles the unpacking of the args passed as
   part of the /addTask topic and passes then to the relevant function */
-  function subscribeToAddTask() {
+  function subscribeToCreateTask() {
     PubSub.subscribe("/createTask", (topic, obj) => {
       console.log("creating a new task!");
       addTask(obj.project, obj.taskTitle, obj.dueDate, obj.priority);
     });
   }
 
-  subscribeToAddTask();
+  function initialise(json) {
+    /*
+    Takes a JSON representation of projects and initialise the objects as needed in memory.
+    Most likely used with local storage to initialise objects.
+    See README for an example spec
+    */
+    const projects = JSON.parse(json).projects;
+    projects.forEach((project) => {
+      addProject(project.name, project.tasks);
+    });
+  }
+
+  initialise(dummyData);
+  subscribeToCreateTask();
 
   return {
     addProject,
-    getProjects,
+    getProject,
+    getProjectsAll,
     removeProject,
-    getAllTaskDetails,
+    getAllTasks,
   };
 })();
 

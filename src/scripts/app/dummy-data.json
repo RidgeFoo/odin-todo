@@ -1,0 +1,34 @@
+{
+  "projects":[
+     {
+        "name":"Inbox",
+        "tasks":[
+           {
+              "title":"Task 1",
+              "dueDate":"2020-01-01",
+              "priority":"Low"
+           },
+           {
+              "title":"Task 2",
+              "dueDate":"2020-01-02",
+              "priority":"Low"
+           }
+        ]
+     },
+     {
+        "name":"Work",
+        "tasks":[
+           {
+              "title":"Work 1",
+              "dueDate":"2022-01-01",
+              "priority":"High"
+           },
+           {
+              "title":"Work 2",
+              "dueDate":"2022-04-01",
+              "priority":"High"
+           }
+        ]
+     }
+  ]
+}

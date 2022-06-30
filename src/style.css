@@ -87,10 +87,10 @@ footer {
 #tasks-add-task,
 .task,
 #add-task,
-.form-valid,
 #btn-cancel,
 .task-property input,
-.task-property select {
+.task-property select,
+#btn-add-task.form-valid {
   cursor: pointer;
 }
 
@@ -192,14 +192,11 @@ form input[type="text"] {
 #btn-add-task {
   border: none;
   color: white;
-}
-
-.form-invalid {
   background-color: rgba(219, 76, 63, 0.4);
   cursor: not-allowed;
 }
 
-.form-valid {
+#btn-add-task.form-valid {
   background-color: rgb(219, 76, 63);
 }
 

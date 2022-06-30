@@ -4,8 +4,16 @@ import PubSub from "./pubsub";
 import dummyData from "./dummy-data.json";
 
 const Todo = (function () {
-  // Use an object to prevent projects with the same name being added
+  // Uses an object to prevent projects with the same name being added
   const _projects = {};
+  const _filterApplied = () => {}; // could this reference a function that we use as a callback???
+  const _tasksToDisplay = [];
+
+  /*
+  A task can be added to a project that currently isn't filtered to and therefore shouldn't be displayed.
+  We could use a callback function maybe that does the filtering of tasks when we publish to the "/renderTasks" topic,
+  the args would simply be outcome of that callback function???
+  */
 
   function addProject(name, tasks) {
     // tasks is optional really
@@ -29,6 +37,8 @@ const Todo = (function () {
     addProject(projectName);
     const project = getProject(projectName);
     const task = project.addTask(taskTitle, dueDate, priority);
+
+    PubSub.publish("/renderTasks", getAllTasks());
     return task;
   }
 
@@ -62,6 +72,8 @@ const Todo = (function () {
       addProject(project.name, project.tasks);
     });
   }
+
+  function filterTasks(filterType, value) {}
 
   initialise(dummyData);
   subscribeToCreateTask();

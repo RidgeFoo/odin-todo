@@ -1,16 +1,15 @@
 import PubSub from "../app/pubsub";
 
 export default (function () {
-  const modal = document.createElement("dialog");
-  const form = document.createElement("form");
-
-  function toggleModal() {
-    modal.open ? modal.close() : modal.showModal();
-  }
-
-  function populateModal() {
-    modal.append(createTaskForm());
-  }
+  const taskInput = createTaskInput();
+  const projectDropDown = createProjectDropDown();
+  const dueDate = createDueDateInput();
+  const prioritiesDropDown = createPriorityDropDown();
+  const taskProperties = createTaskProperties();
+  const buttons = createFormButtons();
+  const btnAdd = buttons.querySelector("#btn-add-task");
+  const form = createTaskForm();
+  const modal = createModal();
 
   function createTaskInput() {
     const taskInput = document.createElement("input");
@@ -26,13 +25,7 @@ export default (function () {
   function createTaskProperties() {
     const container = document.createElement("div");
     container.id = "modal-task-properties";
-
-    container.append(
-      createDueDateInput(),
-      createPriorityDropDown(),
-      createProjectDropDown()
-    );
-
+    container.append(dueDate, prioritiesDropDown, projectDropDown);
     return container;
   }
 
@@ -59,8 +52,8 @@ export default (function () {
     const container = document.createElement("div");
     container.id = "set-priority";
     container.className = "task-property";
-    const priorities = document.createElement("select");
 
+    const priorities = document.createElement("select");
     priorities.id = "priority";
     priorities.setAttribute("name", "priority");
 
@@ -84,7 +77,7 @@ export default (function () {
   }
 
   function createProjectDropDown() {
-    const projects = ["Inbox"];
+    const projects = ["Inbox", "Work"];
 
     // form data list element with options
     // Have to allow the user to input a new project and create that project
@@ -100,9 +93,7 @@ export default (function () {
     dropDown.id = "project";
     dropDown.setAttribute("name", "project");
     dropDown.setAttribute("list", "projects");
-
-    // Set to our default project - TODO: Move the default creation out of here
-    dropDown.setAttribute("value", projects[0]);
+    dropDown.setAttribute("required", "");
 
     const projectsList = document.createElement("datalist");
     projectsList.id = "projects";
@@ -127,31 +118,34 @@ export default (function () {
 
     const btnAdd = document.createElement("button");
     btnAdd.setAttribute("type", "submit");
-    const btnCancel = document.createElement("button");
     btnAdd.textContent = "Add Task";
     btnAdd.id = "btn-add-task";
-    btnAdd.classList = "form-invalid";
+
+    const btnCancel = document.createElement("button");
     btnCancel.textContent = "Cancel";
     btnCancel.setAttribute("type", "reset");
     btnCancel.id = "btn-cancel";
 
     btnCancel.addEventListener("click", toggleModal);
-    container.append(btnCancel, btnAdd);
 
+    container.append(btnCancel, btnAdd);
     return container;
   }
 
   function createTaskForm() {
+    const form = document.createElement("form");
     form.setAttribute("method", "POST");
-    form.addEventListener("change", () => toggleAddTaskButtonColour());
+    form.addEventListener("change", toggleAddTaskButtonColour);
 
-    form.append(createTaskInput(), createTaskProperties(), createFormButtons());
+    form.append(taskInput, taskProperties, buttons);
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (form.checkValidity()) {
         sendFormData();
         toggleModal();
+        form.reset();
+        toggleAddTaskButtonColour();
       }
     });
 
@@ -159,16 +153,26 @@ export default (function () {
   }
 
   function toggleAddTaskButtonColour() {
-    const button = document.querySelector("#btn-add-task");
-
-    // I know I could do this in a better way!
     if (form.checkValidity()) {
-      button.classList.remove("form-invalid");
-      button.classList.add("form-valid");
+      btnAdd.classList.add("form-valid");
     } else {
-      button.classList.remove("form-valid");
-      button.classList.add("form-invalid");
+      btnAdd.classList.remove("form-valid");
     }
+  }
+
+  function createModal() {
+    const modal = document.createElement("dialog");
+    modal.append(form);
+    return modal;
+  }
+
+  function toggleModal() {
+    modal.open ? modal.close() : modal.showModal();
+  }
+
+  function renderProjects() {
+    // This will be called every time a new project is deleted or added and will update the values in the
+    // project drop down
   }
 
   function sendFormData() {
@@ -176,7 +180,6 @@ export default (function () {
     PubSub.publish("/createTask", formData);
   }
 
-  populateModal();
   PubSub.subscribe("/taskModal", toggleModal);
 
   return modal;

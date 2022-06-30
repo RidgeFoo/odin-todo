@@ -47,7 +47,6 @@ const Todo = (function () {
   part of the /addTask topic and passes then to the relevant function */
   function subscribeToCreateTask() {
     PubSub.subscribe("/createTask", (topic, obj) => {
-      console.log("creating a new task!");
       addTask(obj.project, obj.taskTitle, obj.dueDate, obj.priority);
     });
   }

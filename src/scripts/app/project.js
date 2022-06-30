@@ -1,14 +1,12 @@
 import Task from "./task";
 
-export default function Project(name, tasks) {
+export default function Project(name, taskList) {
   // We need to rebuild projects and their methods from data held in the LocalStorage
   // Tasks is an array of objects with the relevant properties
   let _name = name;
-  let _tasks = [];
+  let _tasks = processTasks(taskList);
 
-  processTasks(tasks);
-
-  function processTasks(tasks) {
+  function processTasks(taskList) {
     /*
     Primarily use to load tasks from local storage
     Expects an array with objects with properties:
@@ -20,9 +18,15 @@ export default function Project(name, tasks) {
       }
     ]
     */
-    if (!Array.isArray(tasks)) return;
+    if (!Array.isArray(taskList)) return [];
 
-    tasks.forEach((task) => addTask(task.title, task.dueDate, task.priority));
+    const list = [];
+
+    taskList.forEach((task) =>
+      list.push(new Task(task.title, task.dueDate, task.priority))
+    );
+
+    return list;
   }
 
   function getName() {
@@ -48,9 +52,7 @@ export default function Project(name, tasks) {
   }
 
   function addTask(title, dueDate, priority) {
-    const newTask = Task(title, dueDate, priority);
-    _tasks.push(newTask);
-    return newTask;
+    _tasks.push(Task(title, dueDate, priority));
   }
 
   function removeTask(task) {

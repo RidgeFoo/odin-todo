@@ -7,9 +7,9 @@ import PubSub from "../app/pubsub";
 
 const sidebar = (function () {
   const quickFilters = [
-    { name: "inbox", svg: svgInbox, topic: "/filterInbox" },
-    { name: "today", svg: svgToday, topic: "/filterToday" },
-    { name: "upcoming", svg: svgUpcoming, topic: "/filterUpcoming" },
+    { name: "inbox", svg: svgInbox, topic: "/filter" },
+    { name: "today", svg: svgToday, topic: "/filter" },
+    { name: "upcoming", svg: svgUpcoming, topic: "/filter" },
   ];
 
   function selectDropDownChevron() {
@@ -53,9 +53,7 @@ const sidebar = (function () {
     label.className = "quick-filter-label";
 
     quickFilter.append(label);
-    quickFilter.addEventListener("click", () =>
-      PubSub.publish(topic, `The ${name} button was clicked!`)
-    );
+    quickFilter.addEventListener("click", () => PubSub.publish(topic, name));
 
     return quickFilter;
   }
@@ -107,8 +105,6 @@ const sidebar = (function () {
   function renderProjects(projects) {
     // Take a list of projects and use that to render the projects???
   }
-
-  PubSub.subscribe("/toggleProjects", toggleProjectsDropDown);
 
   return createNav();
 })();

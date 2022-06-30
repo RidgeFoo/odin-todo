@@ -226,7 +226,7 @@ form input[type="text"] {
   font-size: 14px;
 }
 
-#tasks-container {
+#main {
   grid-template-columns: 2/3;
   grid-template-rows: 2/3;
   overflow-y: scroll;
@@ -236,7 +236,7 @@ form input[type="text"] {
   margin-right: var(--tasks-margin);
 }
 
-#tasks-container h1 {
+#main h1 {
   margin-bottom: 18px;
 }
 

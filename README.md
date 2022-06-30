@@ -23,16 +23,21 @@
 
 ## To Do:
 
-- [ ] Add a task to the default "Inbox" project - ignore storage for now!
-- [ ] Display said task
+- [x] Add a task to the default "Inbox" project - ignore storage for now!
+- [x] Display said task
+- [ ] Change the way the task rendering works / initialising of the task list
+
 - [ ] Project Drop Down - Display Projects except the "Inbox" project
 - [ ] Clicking on Project in the project dropdown should filter the tasks displayed to just the tasks associated with the project.
 - [ ] Clicking the Inbox button in the quick filter should filter displayed tasks to just the tasks in the Inbox project.
 - [ ] Clicking on the "Today" or "Upcoming" buttons should filter the tasks across all projects just based on the Due Dates of the tasks.
+
 - [ ] Delete a task
 - [ ] Edit a task
+- [ ] Complete a task
 - [ ] Delete a project
-- [ ] Tasks title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
+
+- [ ] Tasks list title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
 
 ## Storing the data in local storage
 

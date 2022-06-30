@@ -1,4 +1,3 @@
-// Factory function
 export default function Task(taskTitle, dueDate, priority, isDone) {
   let _title = taskTitle;
   let _dueDate = dueDate;

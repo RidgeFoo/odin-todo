@@ -14,8 +14,10 @@ import tasks from "./ui/tasks";
 window.Todo = Todo;
 
 const body = document.querySelector("body");
-body.append(header, sidebar, tasks(Todo.getAllTasks()), modal);
+body.append(header, sidebar, tasks, modal);
 
 PubSub.subscribe("/filterInbox", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterToday", (topic, args) => console.log(topic, args));
 PubSub.subscribe("/filterUpcoming", (topic, args) => console.log(topic, args));
+
+PubSub.publish("/renderTasks", Todo.getAllTasks());

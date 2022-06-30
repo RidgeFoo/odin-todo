@@ -1,6 +1,5 @@
 import Task from "./task";
 
-// Factory function
 export default function Project(name, tasks) {
   // We need to rebuild projects and their methods from data held in the LocalStorage
   // Tasks is an array of objects with the relevant properties

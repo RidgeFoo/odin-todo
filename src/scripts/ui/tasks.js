@@ -1,5 +1,6 @@
 import svgAdd from "../../images/plus-solid.svg";
 import PubSub from "../app/pubsub";
+import { clearChildElements } from "./helpers";
 
 const tasks = (function () {
   const addTaskButton = createAddTaskButton();
@@ -72,16 +73,9 @@ const tasks = (function () {
     return container;
   }
 
-  function clearTaskList() {
-    // Remove tasks
-    while (taskList.lastChild) {
-      taskList.lastChild.remove();
-    }
-  }
-
   function renderTasks(topic, tasks) {
     // Can be used to render the tasks that have been filtered by some other function
-    clearTaskList();
+    clearChildElements(taskList);
     const taskElements = tasks.map((task) =>
       createTaskElement(
         task.taskTitle,

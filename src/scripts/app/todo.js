@@ -22,6 +22,7 @@ const Todo = (function () {
     // tasks is optional really
     if (name in _projects) return;
     _projects[name] = Project(name, tasks);
+    PubSub.publish("/renderProjects", getProjectNames());
   }
 
   function getProjectsAll() {
@@ -45,6 +46,7 @@ const Todo = (function () {
     const project = getProject(projectName);
     const task = project.addTask(taskTitle, dueDate, priority);
 
+    //TODO: This will need to change depending on the currently applied filter???
     PubSub.publish("/renderTasks", getAllTasks());
     return task;
   }

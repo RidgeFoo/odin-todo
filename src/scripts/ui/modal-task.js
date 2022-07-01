@@ -1,4 +1,5 @@
 import PubSub from "../app/pubsub";
+import { clearChildElements } from "./helpers";
 
 export default (function () {
   const taskInput = createTaskInput();
@@ -87,15 +88,8 @@ export default (function () {
     return container;
   }
 
-  // Might be an idea to move this into a helper as Tasks have a similar requirement
-  function clearProjectList() {
-    while (projectListContainer.lastChild) {
-      projectListContainer.lastChild.remove();
-    }
-  }
-
   function renderProjectList(topic, projects) {
-    clearProjectList();
+    clearChildElements(projectListContainer);
     projects.sort().forEach((project) => {
       projectListContainer.appendChild(createDataListOption(project));
     });

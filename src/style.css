@@ -116,7 +116,7 @@ footer {
   background-color: var(--header-bg-color-hover);
 }
 
-#nav-container svg {
+.quick-filter svg {
   width: 18px;
 }
 
@@ -136,7 +136,21 @@ footer {
   text-align: start;
 }
 
-#project-drop-down svg {
+#project-list {
+  display: block;
+}
+
+#project-list.hidden {
+  display: none;
+}
+
+#chevron-container {
+  display: flex;
+  align-items: center;
+}
+
+#chevron {
+  width: 18px;
   height: 18px;
 }
 

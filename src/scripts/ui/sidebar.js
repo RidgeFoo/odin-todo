@@ -4,6 +4,7 @@ import svgUpcoming from "../../images/calendar-days-solid.svg";
 import svgChevronDown from "../../images/chevron-down-solid.svg";
 import svgChevronRight from "../../images/chevron-right-solid.svg";
 import PubSub from "../app/pubsub";
+import { clearChildElements } from "./helpers";
 
 const sidebar = (function () {
   const quickFilters = [
@@ -12,8 +13,34 @@ const sidebar = (function () {
     { name: "upcoming", svg: svgUpcoming, topic: "/filter" },
   ];
 
-  function selectDropDownChevron() {
-    return document.querySelector("#project-drop-down > svg");
+  PubSub.subscribe("/renderProjects", renderProjects);
+
+  const quickFilterContainer = createQuickFilterContainer();
+  const projectList = createProjectList();
+  const dropDownChevronContainer = createDropDownChevronContainer();
+  const projectDropDown = createProjectDropDown();
+  const projectsContainer = createProjectsContainer();
+
+  function createProjectList() {
+    const list = document.createElement("ul");
+    list.id = "project-list";
+    return list;
+  }
+
+  function renderProjects(topic, projects) {
+    // Projects is an array of names for the time being
+    console.log("Rendering new projects");
+    clearChildElements(projectList);
+    projects.forEach((project) => {
+      projectList.appendChild(createProjectElement(project));
+    });
+  }
+
+  function createProjectElement(name) {
+    const el = document.createElement("li");
+    el.className = "project-selector";
+    el.textContent = name;
+    return el;
   }
 
   function createNav() {
@@ -21,10 +48,7 @@ const sidebar = (function () {
     const navContainer = document.createElement("div");
     navContainer.id = "nav-container";
 
-    navContainer.append(
-      createQuickFilterContainer(),
-      createProjectsContainer()
-    );
+    navContainer.append(quickFilterContainer, projectsContainer);
     nav.append(navContainer);
     return nav;
   }
@@ -32,11 +56,12 @@ const sidebar = (function () {
   function createQuickFilterContainer() {
     const quickFilterContainer = document.createElement("div");
     quickFilterContainer.id = "quick-filters";
-    const filters = quickFilters.map((filter) =>
-      createQuickFilter(filter.name, filter.svg, filter.topic)
-    );
 
-    quickFilterContainer.append(...filters);
+    quickFilters.forEach((filter) =>
+      quickFilterContainer.appendChild(
+        createQuickFilter(filter.name, filter.svg, filter.topic)
+      )
+    );
 
     return quickFilterContainer;
   }
@@ -53,6 +78,7 @@ const sidebar = (function () {
     label.className = "quick-filter-label";
 
     quickFilter.append(label);
+    // TODO: Change this!
     quickFilter.addEventListener("click", () => PubSub.publish(topic, name));
 
     return quickFilter;
@@ -60,9 +86,9 @@ const sidebar = (function () {
 
   function createProjectsContainer() {
     const container = document.createElement("div");
-    container.className = "projects";
+    container.id = "projects-container";
 
-    container.appendChild(createProjectDropDown());
+    container.append(projectDropDown, projectList);
     return container;
   }
 
@@ -74,36 +100,39 @@ const sidebar = (function () {
     label.className = "project-label";
     label.textContent = "Projects";
 
-    dropDown.insertAdjacentHTML("afterbegin", createDropDownChevron());
-    dropDown.appendChild(label);
-
+    dropDown.append(dropDownChevronContainer, label);
     dropDown.addEventListener("click", toggleProjectsDropDown);
-
     return dropDown;
   }
 
-  function createDropDownChevron() {
+  function createDropDownChevronContainer() {
+    const container = document.createElement("div");
+    container.id = "chevron-container";
+    container.appendChild(getDropDownChevron());
+    return container;
+  }
+
+  function getDropDownChevron(display) {
+    // TODO: Change the way this works to put the local storage stuff somewhere else???
     // Based on whether the user last toggled to display the projects we should use the that value
     const displayProjects = JSON.parse(localStorage.getItem("displayProjects"));
-    return displayProjects ? svgChevronDown : svgChevronRight;
+    const template = document.createElement("template");
+    template.innerHTML = displayProjects ? svgChevronDown : svgChevronRight;
+    template.content.firstChild.id = "chevron";
+    return template.content.firstChild;
   }
 
   function toggleProjectsDropDown() {
-    // Honestly using PubSub for this may not really make sense
+    // TODO: Honestly using PubSub for this may not really make sense
     PubSub.publish("/toggleStorageValue", "displayProjects");
-    setDropDownChevron();
-  }
+    dropDownChevronContainer.replaceChildren(getDropDownChevron());
 
-  function setDropDownChevron() {
-    selectDropDownChevron().innerHTML = createDropDownChevron();
+    // TODO: Change this as it doesn't quite work - this whole toggling thing needs a rethink really
+    projectList.classList.toggle("hidden");
   }
 
   function toggleProjects() {
     // Display the projects if the toggle value is set appropriately
-  }
-
-  function renderProjects(projects) {
-    // Take a list of projects and use that to render the projects???
   }
 
   return createNav();

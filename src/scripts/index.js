@@ -18,4 +18,6 @@ body.append(header, sidebar, tasks, modal);
 
 PubSub.subscribe("/filter", (topic, args) => console.log(topic, args));
 
+// Need to figure out a better way of doing this stuff really
 PubSub.publish("/renderTasks", Todo.getAllTasks());
+PubSub.publish("/renderProjects", Todo.getProjectNames());

@@ -23,9 +23,12 @@
 
 ## To Do:
 
+- [x] Project drop down in add task needs to use a similar rendering method to the tasks
+- [ ] Sidebar needs to have a similar rendering method to the above???
+
 - [x] Add a task to the default "Inbox" project - ignore storage for now!
 - [x] Display said task
-- [ ] Change the way the task rendering works / initialising of the task list
+- [x] Change the way the task rendering works / initialising of the task list
 
 - [ ] Project Drop Down - Display Projects except the "Inbox" project
 - [ ] Clicking on Project in the project dropdown should filter the tasks displayed to just the tasks associated with the project.

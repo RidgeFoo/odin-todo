@@ -285,11 +285,13 @@ form input[type="text"] {
   color: var(--color-light-grey);
 }
 
+/*This should ultimately be a coloured circle that also defines whether a tasks is complete or not*/
 .task-priority {
   grid-area: priority;
   font-size: 13px;
   display: flex;
   align-items: center;
+  text-transform: capitalize;
 }
 
 .task-title {

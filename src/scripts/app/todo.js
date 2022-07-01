@@ -9,6 +9,9 @@ const Todo = (function () {
   const _filterApplied = () => {}; // could this reference a function that we use as a callback???
   const _tasksToDisplay = [];
 
+  initialise(dummyData);
+  subscribeToCreateTask();
+
   /*
   A task can be added to a project that currently isn't filtered to and therefore shouldn't be displayed.
   We could use a callback function maybe that does the filtering of tasks when we publish to the "/renderTasks" topic,
@@ -23,6 +26,10 @@ const Todo = (function () {
 
   function getProjectsAll() {
     return _projects;
+  }
+
+  function getProjectNames() {
+    return Object.keys(_projects);
   }
 
   function getProject(name) {
@@ -75,13 +82,11 @@ const Todo = (function () {
 
   function filterTasks(filterType, value) {}
 
-  initialise(dummyData);
-  subscribeToCreateTask();
-
   return {
     addProject,
     getProject,
     getProjectsAll,
+    getProjectNames,
     removeProject,
     getAllTasks,
   };

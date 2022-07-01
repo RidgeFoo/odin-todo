@@ -2,14 +2,19 @@ import PubSub from "../app/pubsub";
 
 export default (function () {
   const taskInput = createTaskInput();
+  const projectListContainer = createProjectListContainer();
   const projectDropDown = createProjectDropDown();
   const dueDate = createDueDateInput();
   const prioritiesDropDown = createPriorityDropDown();
   const taskProperties = createTaskProperties();
   const buttons = createFormButtons();
   const btnAdd = buttons.querySelector("#btn-add-task");
+
   const form = createTaskForm();
   const modal = createModal();
+
+  PubSub.subscribe("/taskModal", toggleModal);
+  PubSub.subscribe("/renderProjects", renderProjectList);
 
   function createTaskInput() {
     const taskInput = document.createElement("input");
@@ -76,11 +81,36 @@ export default (function () {
     return container;
   }
 
+  function createProjectListContainer() {
+    const container = document.createElement("datalist");
+    container.id = "projects";
+    return container;
+  }
+
+  // Might be an idea to move this into a helper as Tasks have a similar requirement
+  function clearProjectList() {
+    while (projectListContainer.lastChild) {
+      projectListContainer.lastChild.remove();
+    }
+  }
+
+  function renderProjectList(topic, projects) {
+    clearProjectList();
+    projects.sort().forEach((project) => {
+      projectListContainer.appendChild(createDataListOption(project));
+    });
+  }
+
+  function createDataListOption(value) {
+    const option = document.createElement("option");
+    option.setAttribute("value", value);
+    return option;
+  }
+
   function createProjectDropDown() {
     const projects = ["Inbox", "Work"];
 
-    // form data list element with options
-    // Have to allow the user to input a new project and create that project
+    // Could allow the user to input a new project and create that project
     const container = document.createElement("div");
     container.id = "set-project";
     container.className = "task-property";
@@ -95,19 +125,7 @@ export default (function () {
     dropDown.setAttribute("list", "projects");
     dropDown.setAttribute("required", "");
 
-    const projectsList = document.createElement("datalist");
-    projectsList.id = "projects";
-
-    // Inbox will always be in the list and is the default
-    // Projects should be populated from local storage???
-
-    projects.forEach((proj) => {
-      const option = document.createElement("option");
-      option.setAttribute("value", proj);
-      projectsList.appendChild(option);
-    });
-
-    container.append(label, dropDown, projectsList);
+    container.append(label, dropDown, projectListContainer);
 
     return container;
   }
@@ -170,17 +188,10 @@ export default (function () {
     modal.open ? modal.close() : modal.showModal();
   }
 
-  function renderProjects() {
-    // This will be called every time a new project is deleted or added and will update the values in the
-    // project drop down
-  }
-
   function sendFormData() {
     const formData = Object.fromEntries(new FormData(form));
     PubSub.publish("/createTask", formData);
   }
-
-  PubSub.subscribe("/taskModal", toggleModal);
 
   return modal;
 })();

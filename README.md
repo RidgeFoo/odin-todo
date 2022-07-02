@@ -26,12 +26,14 @@
 - [x] Project drop down in add task needs to use a similar rendering method to the tasks
 - [x] Sidebar needs to have a similar rendering method to the above???
   - When a new project is created then project drop downs should render to reflect the change
-- [ ] Task borders are overlapping between tasks making a thick border - fix using CSS selectors
-- [ ] Project Drop Down - Display Projects except the "Inbox" project
+- [x] Task borders are overlapping between tasks making a thick border - fix using CSS selectors
+- [x] Project Drop Down - Display Projects except the "Inbox" project
 
 - [x] Add a task to the default "Inbox" project - ignore storage for now!
 - [x] Display said task
 - [x] Change the way the task rendering works / initialising of the task list
+
+- [x] Fix project drop down behaviour - chevron and when projects are shown needs to match properly
 
 - [ ] Clicking on Project in the project dropdown should filter the tasks displayed to just the tasks associated with the project.
 - [ ] Clicking the Inbox button in the quick filter should filter displayed tasks to just the tasks in the Inbox project.
@@ -44,6 +46,10 @@
 - [ ] Delete a project
 
 - [ ] Storage and initialising from storage needs to be done
+
+### Nice to haves:
+
+- [ ] Come up with a better way of handling the toggling and initialisation of the project dropdown list - feels messy currently but works
 
 ## Storing the data in local storage
 

@@ -15,6 +15,8 @@ const sidebar = (function () {
 
   PubSub.subscribe("/renderProjects", renderProjects);
 
+  const initialProjectToggleStatus = getProjectToggleStatus() || false;
+
   const quickFilterContainer = createQuickFilterContainer();
   const projectList = createProjectList();
   const dropDownChevronContainer = createDropDownChevronContainer();
@@ -24,6 +26,7 @@ const sidebar = (function () {
   function createProjectList() {
     const list = document.createElement("ul");
     list.id = "project-list";
+    if (!initialProjectToggleStatus) list.classList.add("hidden");
     return list;
   }
 
@@ -31,15 +34,20 @@ const sidebar = (function () {
     // Projects is an array of names for the time being
     console.log("Rendering new projects");
     clearChildElements(projectList);
-    projects.forEach((project) => {
-      projectList.appendChild(createProjectElement(project));
-    });
+    projects
+      .filter((i) => i !== "Inbox") // A bit messy doing something like this
+      .forEach((project) => {
+        projectList.appendChild(createProjectElement(project));
+      });
   }
 
   function createProjectElement(name) {
     const el = document.createElement("li");
-    el.className = "project-selector";
+    el.className = "project-filter";
     el.textContent = name;
+    el.addEventListener("click", () =>
+      PubSub.publish("/filterByProject", name)
+    );
     return el;
   }
 
@@ -108,16 +116,14 @@ const sidebar = (function () {
   function createDropDownChevronContainer() {
     const container = document.createElement("div");
     container.id = "chevron-container";
-    container.appendChild(getDropDownChevron());
+    container.appendChild(getDropDownChevron(initialProjectToggleStatus));
     return container;
   }
 
-  function getDropDownChevron(display) {
-    // TODO: Change the way this works to put the local storage stuff somewhere else???
+  function getDropDownChevron(isDisplayed) {
     // Based on whether the user last toggled to display the projects we should use the that value
-    const displayProjects = JSON.parse(localStorage.getItem("displayProjects"));
     const template = document.createElement("template");
-    template.innerHTML = displayProjects ? svgChevronDown : svgChevronRight;
+    template.innerHTML = isDisplayed ? svgChevronDown : svgChevronRight;
     template.content.firstChild.id = "chevron";
     return template.content.firstChild;
   }
@@ -125,14 +131,17 @@ const sidebar = (function () {
   function toggleProjectsDropDown() {
     // TODO: Honestly using PubSub for this may not really make sense
     PubSub.publish("/toggleStorageValue", "displayProjects");
-    dropDownChevronContainer.replaceChildren(getDropDownChevron());
-
-    // TODO: Change this as it doesn't quite work - this whole toggling thing needs a rethink really
-    projectList.classList.toggle("hidden");
+    const displayProjects = getProjectToggleStatus();
+    dropDownChevronContainer.replaceChildren(
+      getDropDownChevron(displayProjects)
+    );
+    displayProjects
+      ? projectList.classList.remove("hidden")
+      : projectList.classList.add("hidden");
   }
 
-  function toggleProjects() {
-    // Display the projects if the toggle value is set appropriately
+  function getProjectToggleStatus() {
+    return JSON.parse(localStorage.getItem("displayProjects"));
   }
 
   return createNav();

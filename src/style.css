@@ -9,6 +9,8 @@
   --color-light-grey: rgb(128, 128, 128);
   --tasks-margin: max(100px, 15%);
   --color-task: rgb(240, 240, 240);
+  --color-sidebar-hover: #eee;
+  --task-border: 1px solid var(--color-task);
 }
 
 body {
@@ -79,7 +81,7 @@ footer {
 }
 
 .quick-filter:hover {
-  background-color: #eee;
+  background-color: var(--color-sidebar-hover);
 }
 
 .quick-filter,
@@ -90,7 +92,8 @@ footer {
 #btn-cancel,
 .task-property input,
 .task-property select,
-#btn-add-task.form-valid {
+#btn-add-task.form-valid,
+.project-filter:hover {
   cursor: pointer;
 }
 
@@ -126,18 +129,27 @@ footer {
 }
 
 .quick-filter,
+#project-drop-down,
+.project-filter {
+  border-radius: 5px;
+}
+
+.quick-filter,
 #project-drop-down {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 5px 0px 5px 7px;
-  border-radius: 5px;
+
   text-transform: capitalize;
   text-align: start;
 }
 
 #project-list {
   display: block;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow-y: scroll;
 }
 
 #project-list.hidden {
@@ -152,15 +164,6 @@ footer {
 #chevron {
   width: 18px;
   height: 18px;
-}
-
-.tooltip {
-  visibility: hidden;
-}
-
-.tooltip:hover {
-  visibility: visible;
-  position: relative;
 }
 
 dialog {
@@ -263,6 +266,7 @@ form input[type="text"] {
   color: var(--color-light-grey);
   border-radius: 8px;
   margin-top: 20px;
+  outline: none;
 }
 
 #tasks-add-task > svg {
@@ -281,6 +285,10 @@ form input[type="text"] {
   margin: 0;
 }
 
+.task:first-child {
+  border-top: var(--task-border);
+}
+
 .task {
   display: grid;
   grid-template-areas:
@@ -288,9 +296,7 @@ form input[type="text"] {
     "priority properties";
   grid-template-columns: 50px auto;
   grid-template-rows: min-content min-content;
-  --border: 1px solid var(--color-task);
-  border-top: var(--border);
-  border-bottom: var(--border);
+  border-bottom: var(--task-border);
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -318,4 +324,18 @@ form input[type="text"] {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
+}
+
+.project-filter::marker {
+  color: var(--color-light-grey);
+  font-size: 1.2rem;
+}
+
+.project-filter:hover {
+  background-color: var(--color-sidebar-hover);
+}
+
+.project-filter {
+  padding-left: 10px;
+  font-size: 14px;
 }

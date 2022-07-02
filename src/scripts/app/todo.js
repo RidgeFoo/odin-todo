@@ -1,22 +1,11 @@
 // import Sherlock from "sherlockjs";
 import Project from "./project";
 import PubSub from "./pubsub";
-import dummyData from "./dummy-data.json";
 
 const Todo = (function () {
   // Uses an object to prevent projects with the same name being added
   const _projects = {};
-  const _filterApplied = () => {}; // could this reference a function that we use as a callback???
-  const _tasksToDisplay = [];
-
-  initialise(dummyData);
-  subscribeToCreateTask();
-
-  /*
-  A task can be added to a project that currently isn't filtered to and therefore shouldn't be displayed.
-  We could use a callback function maybe that does the filtering of tasks when we publish to the "/renderTasks" topic,
-  the args would simply be outcome of that callback function???
-  */
+  let _tasksFilterApplied; // could this reference a function that we use as a callback when rendering tasks???
 
   function addProject(name, tasks) {
     // tasks is optional really
@@ -42,13 +31,17 @@ const Todo = (function () {
   }
 
   function addTask(projectName, taskTitle, dueDate, priority) {
+    /* We render the task list based on the currently applied filter.
+    If user adds a task that isn't within the current filter then they won't see it immediately.*/
     addProject(projectName);
     const project = getProject(projectName);
     const task = project.addTask(taskTitle, dueDate, priority);
-
-    //TODO: This will need to change depending on the currently applied filter???
-    PubSub.publish("/renderTasks", getAllTasks());
+    PubSub.publish("/taskListUpdated", _tasksFilterApplied());
     return task;
+  }
+
+  function getTasksByProject(projectName) {
+    return getProject(projectName).getTaskDetailsAll();
   }
 
   function getAllTasks() {
@@ -64,13 +57,26 @@ const Todo = (function () {
 
   /* Function that handles the unpacking of the args passed as
   part of the /addTask topic and passes then to the relevant function */
-  function subscribeToCreateTask() {
+  function _subscribeToCreateTask() {
     PubSub.subscribe("/createTask", (topic, obj) => {
       addTask(obj.project, obj.taskTitle, obj.dueDate, obj.priority);
     });
   }
 
-  function initialise(json) {
+  function _setTaskFilter(type = "All", value) {
+    // This will be called by a PubSub subscription and when we initialise the app
+    if (type === "All") {
+      _tasksFilterApplied = getAllTasks;
+    } else if (type === "/filterByProject") {
+      _tasksFilterApplied = () => getTasksByProject(value);
+    } else if (type === "/filterByPeriod") {
+      console.log("Filtering by time period isn't implemented yet");
+    }
+
+    PubSub.publish("/taskListUpdated", _tasksFilterApplied());
+  }
+
+  function init(json) {
     /*
     Takes a JSON representation of projects and initialise the objects as needed in memory.
     Most likely used with local storage to initialise objects.
@@ -80,9 +86,14 @@ const Todo = (function () {
     projects.forEach((project) => {
       addProject(project.name, project.tasks);
     });
-  }
+    _setTaskFilter();
+    _subscribeToCreateTask();
 
-  function filterTasks(filterType, value) {}
+    PubSub.subscribe("/filterByProject", _setTaskFilter);
+    PubSub.subscribe("/filterByPeriod", _setTaskFilter);
+    PubSub.publish("/renderTasks", _tasksFilterApplied());
+    PubSub.publish("/renderProjects", getProjectNames());
+  }
 
   return {
     addProject,
@@ -91,6 +102,7 @@ const Todo = (function () {
     getProjectNames,
     removeProject,
     getAllTasks,
+    init,
   };
 })();
 

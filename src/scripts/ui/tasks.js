@@ -102,7 +102,7 @@ const tasks = (function () {
     return main;
   }
 
-  PubSub.subscribe("/renderTasks", renderTasks);
+  PubSub.subscribe("/taskListUpdated", renderTasks);
 
   return main;
 })();

@@ -8,15 +8,14 @@ import { clearChildElements } from "./helpers";
 
 const sidebar = (function () {
   const quickFilters = [
-    { name: "inbox", svg: svgInbox, topic: "/filter" },
-    { name: "today", svg: svgToday, topic: "/filter" },
-    { name: "upcoming", svg: svgUpcoming, topic: "/filter" },
+    { name: "Inbox", svg: svgInbox, topic: "/filterByProject" },
+    { name: "Today", svg: svgToday, topic: "/filterByPeriod" },
+    { name: "Upcoming", svg: svgUpcoming, topic: "/filterByPeriod" },
   ];
 
   PubSub.subscribe("/renderProjects", renderProjects);
 
   const initialProjectToggleStatus = getProjectToggleStatus() || false;
-
   const quickFilterContainer = createQuickFilterContainer();
   const projectList = createProjectList();
   const dropDownChevronContainer = createDropDownChevronContainer();

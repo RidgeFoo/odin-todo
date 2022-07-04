@@ -21,9 +21,9 @@
   - Today will bring in all tasks due today or in the past.
   - Upcoming is tasks due within 7 days or in the past.
 
-- [ ] Tasks list title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
+- [x] Tasks list title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
 
-- [ ] Task priority should be a coloured circle
+- [ ] Task priority should be a coloured circle - Red, Amber, Green
 
 - [ ] Complete / Delete a task by clicking the coloured circle - some svg animation may be needed here???
 - [ ] Edit a task

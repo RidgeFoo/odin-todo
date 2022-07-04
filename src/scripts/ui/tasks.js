@@ -3,6 +3,10 @@ import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 
 const tasks = (function () {
+  PubSub.subscribe("/taskListUpdated", renderTasks);
+  PubSub.subscribe("/filterByProject", setMainTitle);
+  PubSub.subscribe("/filterByPeriod", setMainTitle);
+
   const addTaskButton = createAddTaskButton();
   const taskList = createTaskListContainer();
   const taskContainer = createTasksContainer();
@@ -95,14 +99,16 @@ const tasks = (function () {
     return elTitle;
   }
 
+  function setMainTitle(topic, text) {
+    mainTitle.textContent = text;
+  }
+
   function createMain() {
     const main = document.createElement("div");
     main.id = "main";
     main.append(mainTitle, taskContainer);
     return main;
   }
-
-  PubSub.subscribe("/taskListUpdated", renderTasks);
 
   return main;
 })();

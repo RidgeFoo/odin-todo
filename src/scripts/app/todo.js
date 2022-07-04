@@ -1,7 +1,7 @@
 // import Sherlock from "sherlockjs";
 import Project from "./project";
 import PubSub from "./pubsub";
-import { endOfToday, add, isBefore } from "date-fns";
+import { endOfToday, add } from "date-fns";
 
 const Todo = (function () {
   // Uses an object to prevent projects with the same name being added

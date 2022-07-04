@@ -1,6 +1,9 @@
 import svgAdd from "../../images/plus-solid.svg";
+import svgCircle from "../../images/circle-solid.svg";
+import svgCircleCheck from "../../images/circle-check-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
+import { el } from "date-fns/locale";
 
 const tasks = (function () {
   PubSub.subscribe("/taskListUpdated", renderTasks);
@@ -54,10 +57,17 @@ const tasks = (function () {
     elTitle.className = "task-title";
     elTitle.textContent = taskTitle;
 
-    // Will become a coloured SVG for the different priority levels
     const elPriority = document.createElement("div");
-    elPriority.className = "task-priority";
-    elPriority.textContent = priority;
+    elPriority.classList.add("task-priority", priority.toLowerCase());
+    elPriority.innerHTML = svgCircle;
+    elPriority.addEventListener(
+      "mouseenter",
+      () => (elPriority.innerHTML = svgCircleCheck)
+    );
+    elPriority.addEventListener(
+      "mouseleave",
+      () => (elPriority.innerHTML = svgCircle)
+    );
 
     // Split off into another function???
     const elTaskProperties = document.createElement("div");

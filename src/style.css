@@ -11,7 +11,8 @@
   --color-task: rgb(240, 240, 240);
   --color-sidebar-hover: #eee;
   --task-border: 1px solid var(--color-task);
-  /* RGBA 0.1 for opacity then border is solid color?*/
+  /* The below allows you to store the RGB for colours and then add an opacity if you wanted
+  e.g. rgba(var(--color-amber),0.1) */
   --color-amber: 235, 137, 9;
   --color-red: 209, 69, 59;
   --color-green: 56, 142, 60;
@@ -344,11 +345,11 @@ form input[type="text"] {
 }
 
 .task-priority > svg {
-  width: 14px;
+  width: 17px;
 }
 
 .task-priority.low {
-  fill: rgb(var(--color-green));
+  fill: rgba(var(--color-green));
 }
 
 .task-priority.medium {

@@ -55,9 +55,8 @@ export default function Project(name, taskList) {
     _tasks.push(Task(title, dueDate, priority));
   }
 
-  function removeTask(task) {
-    _tasks = _tasks.filter((x) => x !== task);
-    return task;
+  function removeTask(index) {
+    _tasks.splice(index, 1);
   }
 
   function toJSON() {

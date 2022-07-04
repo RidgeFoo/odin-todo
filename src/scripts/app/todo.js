@@ -37,7 +37,7 @@ const Todo = (function () {
     addProject(projectName);
     const project = getProject(projectName);
     const task = project.addTask(taskTitle, dueDate, priority);
-    PubSub.publish("/taskListUpdated", _tasksFilterApplied());
+    _publishTaskListUpdated();
     return task;
   }
 
@@ -52,8 +52,9 @@ const Todo = (function () {
       .flat();
   }
 
-  function removeTask(projectName, index) {
-    // Need to think about this a bit more
+  function removeTask(topic, { projectName, taskIndex }) {
+    _projects[projectName].removeTask(taskIndex);
+    _publishTaskListUpdated();
   }
 
   /* Function that handles the unpacking of the args passed as
@@ -77,6 +78,10 @@ const Todo = (function () {
       _tasksFilterApplied = _getTasksDueWithin7Days;
     }
 
+    _publishTaskListUpdated();
+  }
+
+  function _publishTaskListUpdated() {
     PubSub.publish("/taskListUpdated", _tasksFilterApplied());
   }
 
@@ -107,6 +112,7 @@ const Todo = (function () {
 
     PubSub.subscribe("/filterByProject", _setTaskFilter);
     PubSub.subscribe("/filterByPeriod", _setTaskFilter);
+    PubSub.subscribe("/completeTask", removeTask);
     PubSub.publish("/renderTasks", _tasksFilterApplied());
     PubSub.publish("/renderProjects", getProjectNames());
   }
@@ -117,6 +123,7 @@ const Todo = (function () {
     getProjectsAll,
     getProjectNames,
     removeProject,
+    removeTask,
     getAllTasks,
     init,
   };

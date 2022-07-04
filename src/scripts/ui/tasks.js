@@ -42,13 +42,14 @@ const tasks = (function () {
     return container;
   }
 
-  function createTaskElement(
+  // TODO: Change this to https://github.com/ryanmcdermott/clean-code-javascript#function-arguments-2-or-fewer-ideally
+  function createTaskElement({
     taskTitle,
-    dueDate,
-    priority,
-    project,
-    isCompleted
-  ) {
+    taskDueDate,
+    taskPriority,
+    projectName,
+    taskIndex,
+  }) {
     // returns the task elements with relevant buttons etc.
     const container = document.createElement("li");
     container.className = "task";
@@ -58,7 +59,7 @@ const tasks = (function () {
     elTitle.textContent = taskTitle;
 
     const elPriority = document.createElement("div");
-    elPriority.classList.add("task-priority", priority.toLowerCase());
+    elPriority.classList.add("task-priority", taskPriority.toLowerCase());
     elPriority.innerHTML = svgCircle;
     elPriority.addEventListener(
       "mouseenter",
@@ -69,17 +70,27 @@ const tasks = (function () {
       () => (elPriority.innerHTML = svgCircle)
     );
 
+    /*
+    TODO: Creating an anonymous function per element may not be the most efficient really
+    binding the project name and task Index to CSS attributes and then just using the event object
+    that gets passed into handle the event based on the CSS attributes rather than creating
+    a closure of an anonymous function with the variables of the projectName and taskIndex bound???
+    */
+    elPriority.addEventListener("click", () =>
+      PubSub.publish("/completeTask", { projectName, taskTitle })
+    );
+
     // Split off into another function???
     const elTaskProperties = document.createElement("div");
     elTaskProperties.className = "task-properties";
 
     const elDueDate = document.createElement("p");
     elDueDate.className = "task-due-date";
-    elDueDate.textContent = dueDate.toDateString();
+    elDueDate.textContent = taskDueDate.toDateString();
 
     const elProject = document.createElement("p");
     elProject.className = "task-project";
-    elProject.textContent = project;
+    elProject.textContent = projectName;
 
     elTaskProperties.append(elDueDate, elProject);
 
@@ -90,15 +101,7 @@ const tasks = (function () {
   function renderTasks(topic, tasks) {
     // Can be used to render the tasks that have been filtered by some other function
     clearChildElements(taskList);
-    const taskElements = tasks.map((task) =>
-      createTaskElement(
-        task.taskTitle,
-        task.taskDueDate,
-        task.taskPriority,
-        task.projectName,
-        task.taskIsDone
-      )
-    );
+    const taskElements = tasks.map((task) => createTaskElement(task));
     taskList.append(...taskElements);
   }
 

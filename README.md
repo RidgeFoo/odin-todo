@@ -22,17 +22,14 @@
   - Upcoming is tasks due within 7 days or in the past.
 
 - [x] Tasks list title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
+- [x] Task priority should be a coloured circle - Red, Amber, Green
+- [x] Complete / Delete a task by clicking the coloured circle
 
-- [ ] Task priority should be a coloured circle - Red, Amber, Green
-
-- [ ] Complete / Delete a task by clicking the coloured circle - some svg animation may be needed here???
 - [ ] Edit a task
-
 - [ ] Storage and initialising from storage needs to be done
-
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
-
 - [ ] Delete a project
+- [ ] Make sure to add attributions
 
 ### Nice to haves:
 

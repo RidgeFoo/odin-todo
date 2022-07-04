@@ -1,6 +1,7 @@
 // import Sherlock from "sherlockjs";
 import Project from "./project";
 import PubSub from "./pubsub";
+import { endOfToday, add, isBefore } from "date-fns";
 
 const Todo = (function () {
   // Uses an object to prevent projects with the same name being added
@@ -63,17 +64,32 @@ const Todo = (function () {
     });
   }
 
-  function _setTaskFilter(type = "All", value) {
+  function _setTaskFilter(type = "All", filterValue) {
     // This will be called by a PubSub subscription and when we initialise the app
+
     if (type === "All") {
       _tasksFilterApplied = getAllTasks;
     } else if (type === "/filterByProject") {
-      _tasksFilterApplied = () => getTasksByProject(value);
-    } else if (type === "/filterByPeriod") {
-      console.log("Filtering by time period isn't implemented yet");
+      _tasksFilterApplied = () => getTasksByProject(filterValue);
+    } else if ((type === "/filterByPeriod") & (filterValue === "Today")) {
+      _tasksFilterApplied = _getTasksDueToday;
+    } else if ((type === "/filterByPeriod") & (filterValue === "Upcoming")) {
+      _tasksFilterApplied = _getTasksDueWithin7Days;
     }
 
     PubSub.publish("/taskListUpdated", _tasksFilterApplied());
+  }
+
+  function _getTasksDueToday() {
+    // Get tasks due today and in the past that are not complete
+    return getAllTasks().filter((task) => task.taskDueDate <= endOfToday());
+  }
+
+  function _getTasksDueWithin7Days() {
+    // Used with the Upcoming filter
+    return getAllTasks().filter(
+      (task) => task.taskDueDate <= add(new Date(), { days: 7 })
+    );
   }
 
   function init(json) {

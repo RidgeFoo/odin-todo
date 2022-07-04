@@ -61,7 +61,7 @@ const tasks = (function () {
 
     const elDueDate = document.createElement("p");
     elDueDate.className = "task-due-date";
-    elDueDate.textContent = dueDate;
+    elDueDate.textContent = dueDate.toDateString();
 
     const elProject = document.createElement("p");
     elProject.className = "task-project";

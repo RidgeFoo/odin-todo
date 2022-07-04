@@ -1,6 +1,6 @@
 export default function Task(taskTitle, dueDate, priority, isDone) {
   let _title = taskTitle;
-  let _dueDate = dueDate;
+  let _dueDate = new Date(dueDate);
   let _priority = priority;
   let _isDone = isDone || false;
 

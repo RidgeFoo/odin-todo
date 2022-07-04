@@ -1,26 +1,5 @@
 # Odin - Todo Project
 
-- Adding a task to project
-- todo.js holds all the projects:
-
-  - Should the projects and tasks objects contain their own methods or should they just be objects with properties?
-  - Should the todo.js handle adding projects and tasks - seems simpler that way.
-  - Projects and Tasks could be classes?
-    - Projects have Tasks?
-    - If they stay the way they are the todo.js is still coordinating the interaction between Projects and Tasks.
-      - For example, adding a task:
-        - we would get the relevant project
-        - We then use that project to add a new task
-      - For displaying tasks
-        - Get the relevant project
-        - Project lists tasks
-
-- Serialising and De-serialising tasks and projects is a problem potentially.
-- When loading from storage the objects all need to be recreated.
-
-  - Does it make sense to have methods with the project and task objects?
-  - Should todo.js handle all of the functionality relating to projects and tasks?
-
 ## To Do:
 
 - [x] Project drop down in add task needs to use a similar rendering method to the tasks
@@ -37,15 +16,23 @@
 
 - [x] Clicking on Project in the project dropdown should filter the tasks displayed to just the tasks associated with the project.
 - [x] Clicking the Inbox button in the quick filter should filter displayed tasks to just the tasks in the Inbox project.
-- [ ] Clicking on the "Today" or "Upcoming" buttons should filter the tasks across all projects just based on the Due Dates of the tasks.
+- [x] Clicking on the "Today" or "Upcoming" buttons should filter the tasks across all projects just based on the Due Dates of the tasks.
+
+  - Today will bring in all tasks due today or in the past.
+  - Upcoming is tasks due within 7 days or in the past.
+
 - [ ] Tasks list title should change depending on the filter applied i.e. if a project then display the project name or if a date filter then the filter name
 
-- [ ] Delete a task
+- [ ] Task priority should be a coloured circle
+
+- [ ] Complete / Delete a task by clicking the coloured circle - some svg animation may be needed here???
 - [ ] Edit a task
-- [ ] Complete a task
-- [ ] Delete a project
 
 - [ ] Storage and initialising from storage needs to be done
+
+  - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
+
+- [ ] Delete a project
 
 ### Nice to haves:
 

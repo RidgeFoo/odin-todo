@@ -1,47 +1,45 @@
-const PubSub = (function () {
-  // Storage for topics that can be broadcast or listened to
-  let topics = {};
-  // A topic identifier
-  let subUid = -1;
+// Storage for topics that can be broadcast or listened to
+let topics = {};
+// A topic identifier
+let subUid = -1;
 
-  function publish(topic, args) {
-    // If nothing is subscribed to the topic then do nothing
-    if (!topics[topic]) return false;
+function publish(topic, args) {
+  // If nothing is subscribed to the topic then do nothing
+  if (!topics[topic]) return false;
 
-    // If there are subscribers to the topic then
-    // get the functions that should be called
-    const subscribers = topics[topic];
+  // If there are subscribers to the topic then
+  // get the functions that should be called
+  const subscribers = topics[topic];
 
-    // Loop over the subscribers to the topic and call their registered functions passing in the args
-    // We expect the callback functions to take the topic and the args
-    for (let subscriber of subscribers) {
-      // The function we need to call has the key func as per the definition of the subscribe function
-      subscriber.func(topic, args);
-    }
-    // Getting rid of returning the entire PubSub object
-    // every time publish is called not sure why they did that
-    // return this;
+  // Loop over the subscribers to the topic and call their registered functions passing in the args
+  // We expect the callback functions to take the topic and the args
+  for (let subscriber of subscribers) {
+    // The function we need to call has the key func as per the definition of the subscribe function
+    subscriber.func(topic, args);
+  }
+  // Getting rid of returning the entire PubSub object
+  // every time publish is called not sure why they did that
+  // return this;
+}
+
+function subscribe(topic, func) {
+  // If subscribing for the first time then add topic as key and create an empty array
+  if (!topics[topic]) {
+    topics[topic] = [];
   }
 
-  function subscribe(topic, func) {
-    // If subscribing for the first time then add topic as key and create an empty array
-    if (!topics[topic]) {
-      topics[topic] = [];
-    }
+  // Generate a token which we use to handle unsubscribing functions from topics
+  const token = (++subUid).toString();
 
-    // Generate a token which we use to handle unsubscribing functions from topics
-    const token = (++subUid).toString();
+  // In the topics object we now have a key for the topic name.
+  // In the array of the topic we add an object with the token and function to call
+  topics[topic].push({ token, func });
+  // return token;
+}
 
-    // In the topics object we now have a key for the topic name.
-    // In the array of the topic we add an object with the token and function to call
-    topics[topic].push({ token, func });
-    // return token;
-  }
-
-  return {
-    publish,
-    subscribe,
-  };
-})();
+const PubSub = {
+  publish,
+  subscribe,
+};
 
 export default PubSub;

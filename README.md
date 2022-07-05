@@ -26,14 +26,23 @@
 - [x] Complete / Delete a task by clicking the coloured circle
 
 - [ ] Edit a task
+  - Clicking a task should open the add task modal or maybe a different modal entirely?
+  - Fill in the values in the form and instead of having add task it should show "Apply Changes"?
+  - Should be able to change project - might be simplest just to delete the original task every time "Apply Changes" is clicked?.
 - [ ] Storage and initialising from storage needs to be done
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
 - [ ] Delete a project
-- [ ] Make sure to add attributions
+- [ ] Make sure to add attributions in the footer area
 
 ### Nice to haves:
 
-- [ ] Come up with a better way of handling the toggling and initialisation of the project dropdown list - feels messy currently but works
+- [ ] Come up with a better way of handling the toggling and initialisation of the project dropdown list - feels messy currently but works.
+- [ ] Don't just delete completed tasks but "archive" them and make them visible using a checkbox or something like that.
+- [ ] Adding a home button that shows all tasks.
+- [ ] Hiding and showing the sidebar.
+- [ ] Inbox should be the default project when adding tasks. Users shouldn't have to select a project when adding a task.
+- [ ] Adding project from the sidebar area.
+- [ ] Task sorting could be better.
 
 ## Storing the data in local storage
 

@@ -1,6 +1,7 @@
 import svgAdd from "../../images/plus-solid.svg";
 import svgCircle from "../../images/circle-solid.svg";
 import svgCircleCheck from "../../images/circle-check-solid.svg";
+//import svgEdit from "../../images/pen-to-square-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 import { el } from "date-fns/locale";
@@ -49,9 +50,12 @@ function createTaskElement({
   taskIndex, // TODO: May want to use this to handle a deletion event instead - see below
 }) {
   // returns the task elements with relevant buttons etc.
-  const container = document.createElement("li");
-  container.className = "task";
-  container.addEventListener("click", () =>
+  const listItem = document.createElement("li");
+  listItem.className = "task";
+
+  const mainArea = document.createElement("div");
+
+  mainArea.addEventListener("click", () =>
     PubSub.publish("/editTaskModal", {
       taskTitle,
       taskDueDate,
@@ -100,8 +104,10 @@ function createTaskElement({
 
   elTaskProperties.append(elDueDate, elProject);
 
-  container.append(elPriority, elTitle, elTaskProperties);
-  return container;
+  mainArea.append(elTitle, elTaskProperties);
+
+  listItem.append(elPriority, mainArea);
+  return listItem;
 }
 
 function renderTasks(topic, tasks) {

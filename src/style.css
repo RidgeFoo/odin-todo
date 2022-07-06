@@ -148,6 +148,10 @@ footer {
   text-align: start;
 }
 
+#project::placeholder {
+  color: black;
+}
+
 #project-list {
   display: block;
   margin-top: 0;

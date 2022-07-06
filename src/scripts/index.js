@@ -5,7 +5,7 @@ import "../style.css";
 import "tippy.js/dist/tippy.css";
 import html from "../index.html";
 //import PubSub from "./app/pubsub";
-//import defaults from "./app/default-values";
+import defaults from "./app/default-values";
 
 import todo from "./app/todo";
 

@@ -43,6 +43,7 @@
 - [ ] Inbox should be the default project when adding tasks. Users shouldn't have to select a project when adding a task.
 - [ ] Adding project from the sidebar area.
 - [ ] Task sorting could be better.
+- [ ] Add a toggle for the sidebar.
 
 ## Storing the data in local storage
 

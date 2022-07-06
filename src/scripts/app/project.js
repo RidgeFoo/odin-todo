@@ -44,10 +44,7 @@ export default function Project(name, taskList) {
 
   function getTaskDetailsAll() {
     return _tasks.map((task, index) =>
-      Object.assign(
-        { projectName: _name, taskIndex: index },
-        task.getTaskDetails()
-      )
+      Object.assign({ projectName: _name, index }, task.getTaskDetails())
     );
   }
 

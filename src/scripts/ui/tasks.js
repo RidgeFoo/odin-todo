@@ -43,11 +43,11 @@ function createTasksContainer() {
 }
 
 function createTaskElement({
-  taskTitle,
-  taskDueDate,
-  taskPriority,
+  title,
+  dueDate,
+  priority,
   projectName,
-  taskIndex, // TODO: May want to use this to handle a deletion event instead - see below
+  index, // TODO: May want to use this to handle a deletion event instead - see below
 }) {
   // returns the task elements with relevant buttons etc.
   const listItem = document.createElement("li");
@@ -57,19 +57,19 @@ function createTaskElement({
 
   mainArea.addEventListener("click", () =>
     PubSub.publish("/editTaskModal", {
-      taskTitle,
-      taskDueDate,
-      taskPriority,
+      title,
+      dueDate,
+      priority,
       projectName,
     })
   );
 
   const elTitle = document.createElement("p");
   elTitle.className = "task-title";
-  elTitle.textContent = taskTitle;
+  elTitle.textContent = title;
 
   const elPriority = document.createElement("div");
-  elPriority.classList.add("task-priority", taskPriority.toLowerCase());
+  elPriority.classList.add("task-priority", priority.toLowerCase());
   elPriority.innerHTML = svgCircle;
   elPriority.addEventListener(
     "mouseenter",
@@ -87,7 +87,7 @@ function createTaskElement({
     a closure of an anonymous function with the variables of the projectName and taskIndex bound???
     */
   elPriority.addEventListener("click", () =>
-    PubSub.publish("/completeTask", { projectName, taskTitle })
+    PubSub.publish("/completeTask", { projectName, title })
   );
 
   // Split off into another function???
@@ -96,7 +96,7 @@ function createTaskElement({
 
   const elDueDate = document.createElement("p");
   elDueDate.className = "task-due-date";
-  elDueDate.textContent = taskDueDate.toLocaleDateString();
+  elDueDate.textContent = dueDate.toLocaleDateString();
 
   const elProject = document.createElement("p");
   elProject.className = "task-project";

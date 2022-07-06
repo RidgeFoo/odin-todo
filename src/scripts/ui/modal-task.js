@@ -2,9 +2,7 @@ import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 
 const defaultProject = "Inbox";
-PubSub.subscribe("/addTaskModal", renderTaskModal);
-PubSub.subscribe("/editTaskModal", renderTaskModal);
-PubSub.subscribe("/renderProjects", renderProjectList);
+let projectList; // used for the project drop down
 
 const buttons = [
   {
@@ -23,16 +21,25 @@ const buttons = [
   },
 ];
 
+const defaultTaskObject = {
+  project: null,
+  title: null,
+  priority: null,
+  dueDate: null,
+};
+
 const [btnAdd, btnCancel] = buttons.map(createButtonElement);
-const taskPropertiesContainer = createTaskPropertiesContainer();
-const projectOptions = createProjectSelect();
-const projectLabel = createProjectLabel();
+
+let taskPropertiesContainer;
+let inputTitle;
+let inputDueDate;
+let priorityDropDown;
+let projectDropDown;
+let form;
+
 const buttonContainer = createButtonContainer();
-const form = createForm();
 const modal = createModal();
 
-// This is only populated when we are editing a task
-let taskToEdit;
 function createButtonElement({ type, id, text, funcEventListener }) {
   const button = document.createElement("button");
   button.setAttribute("type", type);
@@ -47,23 +54,6 @@ function createModal() {
   return modal;
 }
 
-function createForm() {
-  const form = document.createElement("form");
-  form.setAttribute("method", "dialog");
-  form.addEventListener("change", toggleButtonColour);
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (getFormValidity()) {
-      sendFormData();
-      toggleButtonColour();
-      modal.close();
-    }
-  });
-
-  return form;
-}
-
 function getFormValidity() {
   return form.checkValidity();
 }
@@ -75,13 +65,7 @@ function createButtonContainer() {
   return container;
 }
 
-function createTaskPropertiesContainer() {
-  const container = document.createElement("div");
-  container.id = "modal-task-properties";
-  return container;
-}
-
-function createPriorityDropDown(taskPriority = null) {
+function renderPriorityDropDown(taskPriority = null) {
   const options = ["Low", "Medium", "High"];
 
   const container = document.createElement("div");
@@ -101,59 +85,29 @@ function createPriorityDropDown(taskPriority = null) {
     option.setAttribute("value", priority);
     option.textContent = priority;
     // For editing task select the current priority level for the task
-    if (taskToEdit) {
-      taskToEdit.taskPriority === priority
-        ? option.setAttribute("selected", "")
-        : null;
-    }
+    taskPriority === priority ? option.setAttribute("selected", "") : null;
 
     priorities.appendChild(option);
   });
 
   container.append(label, priorities);
 
-  return container;
+  priorityDropDown = container;
 }
 
-function createProjectDropDown() {
-  const container = document.createElement("div");
-  container.id = "set-project";
-  container.className = "task-property";
-
-  container.append(projectLabel, projectOptions);
-
-  return container;
-}
-
-function createProjectLabel() {
-  const label = document.createElement("label");
-  label.textContent = "Project";
-  label.setAttribute("for", "projectName");
-  return label;
-}
-
-function createProjectSelect() {
-  const defaultProject = "Inbox";
-  const select = document.createElement("select");
-  select.id = "project";
-  select.setAttribute("name", "projectName");
-  return select;
-}
-
-function createInputTitle() {
+function renderInputTitle(currentTitle = null) {
   const taskInput = document.createElement("input");
   taskInput.setAttribute("name", "title");
   taskInput.setAttribute("required", "");
   taskInput.setAttribute("type", "text");
   taskInput.setAttribute("placeHolder", "e.g. Take over the world!");
   taskInput.id = "title";
-  if (taskToEdit) {
-    taskInput.setAttribute("value", taskToEdit.taskTitle);
-  }
-  return taskInput;
+  if (currentTitle) taskInput.setAttribute("value", currentTitle);
+
+  inputTitle = taskInput;
 }
 
-function createInputDueDate() {
+function renderInputDueDate(currentDueDate = null) {
   const container = document.createElement("div");
   container.id = "set-date";
   container.className = "task-property";
@@ -163,42 +117,55 @@ function createInputDueDate() {
   dueDate.setAttribute("type", "date");
   dueDate.setAttribute("name", "dueDate");
   dueDate.setAttribute("required", "");
-
-  if (taskToEdit) {
-    dueDate.setAttribute(
-      "value",
-      taskToEdit.taskDueDate.toISOString().slice(0, 10)
-    );
-  }
+  if (currentDueDate)
+    dueDate.setAttribute("value", currentDueDate.toISOString().slice(0, 10));
 
   const dueDateLabel = document.createElement("label");
   dueDateLabel.setAttribute("for", "due-date");
   dueDateLabel.textContent = "Due Date";
 
   container.append(dueDateLabel, dueDate);
-  return container;
+  inputDueDate = container;
 }
 
-function createProjectListOption(project) {
+function createProjectListOption(project, currentProject = null) {
   const option = document.createElement("option");
   option.setAttribute("value", project);
   option.textContent = project;
-
-  if (taskToEdit) {
-    if (taskToEdit.projectName === project) option.setAttribute("selected", "");
-  } else if (project === defaultProject) {
+  if (currentProject === project) {
+    option.setAttribute("selected", "");
+  } else if (!currentProject & (project === defaultProject)) {
     option.setAttribute("selected", "");
   }
+
   return option;
 }
 
-function renderProjectList(topic, projects) {
-  clearChildElements(projectOptions);
-  projects
-    .sort()
-    .forEach((project) =>
-      projectOptions.appendChild(createProjectListOption(project))
-    );
+function updateProjectList(topic, projects) {
+  projectList = projects.sort();
+}
+
+function renderProjectDropDown(currentProject = null) {
+  const container = document.createElement("div");
+  container.id = "set-project";
+  container.className = "task-property";
+
+  const label = document.createElement("label");
+  label.textContent = "Project";
+  label.setAttribute("for", "projectName");
+
+  const defaultProject = "Inbox";
+  const select = document.createElement("select");
+  select.id = "project";
+  select.setAttribute("name", "projectName");
+
+  projectList.forEach((project) =>
+    select.appendChild(createProjectListOption(project, currentProject))
+  );
+
+  container.append(label, select);
+
+  projectDropDown = container;
 }
 
 function toggleButtonColour() {
@@ -209,24 +176,43 @@ function toggleButtonColour() {
   }
 }
 
-function renderContainerTaskProperties() {
-  clearChildElements(taskPropertiesContainer);
-  taskPropertiesContainer.append(
-    createInputDueDate(),
-    createPriorityDropDown(),
-    createProjectDropDown()
-  );
+function renderTaskPropertiesContainer() {
+  const container = document.createElement("div");
+  container.id = "modal-task-properties";
+  container.append(inputDueDate, priorityDropDown, projectDropDown);
+  taskPropertiesContainer = container;
 }
 
-function renderTaskForm() {
-  clearChildElements(form);
-  renderContainerTaskProperties();
-  form.append(createInputTitle(), taskPropertiesContainer, buttonContainer);
+function renderForm() {
+  form = document.createElement("form");
+  form.setAttribute("method", "dialog");
+  form.addEventListener("change", toggleButtonColour);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (getFormValidity()) {
+      sendFormData();
+      toggleButtonColour();
+      modal.close();
+    }
+  });
 }
 
-function renderTaskModal(topic, taskObj = null) {
-  taskToEdit = taskObj;
-  renderTaskForm();
+function renderInputs({ projectName, title, dueDate, priority }) {
+  renderInputTitle(title);
+  renderInputDueDate(dueDate);
+  renderPriorityDropDown(priority);
+  renderProjectDropDown(projectName);
+  renderTaskPropertiesContainer();
+  form.append(inputTitle, taskPropertiesContainer, buttonContainer);
+}
+
+function renderModal(topic, taskObj) {
+  const obj = taskObj || defaultTaskObject;
+  renderForm();
+  renderInputs(obj);
+
+  clearChildElements(modal);
   modal.append(form);
   modal.showModal();
 }
@@ -237,5 +223,9 @@ function sendFormData() {
   const formData = Object.fromEntries(new FormData(form));
   PubSub.publish("/createTask", formData);
 }
+
+PubSub.subscribe("/addTaskModal", renderModal);
+PubSub.subscribe("/editTaskModal", renderModal);
+PubSub.subscribe("/renderProjects", updateProjectList);
 
 export default modal;

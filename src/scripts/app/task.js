@@ -1,8 +1,7 @@
-export default function Task(taskTitle, dueDate, priority, isDone) {
+export default function Task(taskTitle, dueDate, priority) {
   let _title = taskTitle;
   let _dueDate = new Date(dueDate);
   let _priority = priority;
-  let _isDone = isDone || false;
 
   function setTitle(taskTitle) {
     _title = taskTitle;
@@ -25,10 +24,9 @@ export default function Task(taskTitle, dueDate, priority, isDone) {
 
   function getTaskDetails() {
     return {
-      taskTitle: _title,
-      taskDueDate: _dueDate,
-      taskPriority: _priority,
-      taskIsDone: _isDone,
+      title: _title,
+      dueDate: _dueDate,
+      priority: _priority,
     };
   }
 

@@ -3,6 +3,8 @@ import { clearChildElements } from "./helpers";
 
 const defaultProject = "Inbox";
 let projectList; // used for the project drop down
+let isEdit;
+let originalTask; // used when we are editing a task so that we can remove the "old" pre-edit task;
 
 const buttons = [
   {
@@ -207,25 +209,42 @@ function renderInputs({ projectName, title, dueDate, priority }) {
   form.append(inputTitle, taskPropertiesContainer, buttonContainer);
 }
 
-function renderModal(topic, taskObj) {
-  const obj = taskObj || defaultTaskObject;
+function renderModal(taskObj) {
   renderForm();
-  renderInputs(obj);
-
+  renderInputs(taskObj);
+  toggleButtonColour();
   clearChildElements(modal);
   modal.append(form);
   modal.showModal();
+}
+
+function editTask(topic, taskObj) {
+  isEdit = true;
+  originalTask = taskObj;
+  renderModal(taskObj);
+}
+
+function addTask(topic) {
+  isEdit = false;
+  renderModal(defaultTaskObject);
 }
 
 function sendFormData() {
   /* TODO: This could check if it is an edit or create task modal type
     If an edit then it needs to also publish a remove task event for the "original" task */
   const formData = Object.fromEntries(new FormData(form));
-  PubSub.publish("/createTask", formData);
+  if (isEdit) {
+    PubSub.publish("/editTask", {
+      originalTask,
+      editedTask: formData,
+    });
+  } else {
+    PubSub.publish("/createTask", formData);
+  }
 }
 
-PubSub.subscribe("/addTaskModal", renderModal);
-PubSub.subscribe("/editTaskModal", renderModal);
+PubSub.subscribe("/addTaskModal", addTask);
+PubSub.subscribe("/editTaskModal", editTask);
 PubSub.subscribe("/renderProjects", updateProjectList);
 
 export default modal;

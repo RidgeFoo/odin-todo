@@ -40,6 +40,14 @@ function addTask({ projectName, title, dueDate, priority }) {
   return task;
 }
 
+function _editTask(topic, { originalTask, editedTask }) {
+  removeTask(null, {
+    projectName: originalTask.projectName,
+    index: originalTask.index,
+  });
+  addTask(editedTask);
+}
+
 function getTasksByProject(projectName) {
   return getProject(projectName).getTaskDetailsAll();
 }
@@ -51,8 +59,8 @@ function getAllTasks() {
     .flat();
 }
 
-function removeTask(topic, { projectName, taskIndex }) {
-  _projects[projectName].removeTask(taskIndex);
+function removeTask(topic, { projectName, index }) {
+  _projects[projectName].removeTask(index);
   _publishTaskListUpdated();
 }
 
@@ -113,6 +121,7 @@ function init(json) {
   PubSub.subscribe("/completeTask", removeTask);
   PubSub.publish("/renderTasks", _tasksFilterApplied());
   PubSub.publish("/renderProjects", getProjectNames());
+  PubSub.subscribe("/editTask", _editTask);
 }
 
 export default {

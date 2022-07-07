@@ -148,10 +148,6 @@ footer {
   text-align: start;
 }
 
-#project::placeholder {
-  color: black;
-}
-
 #project-list {
   display: block;
   margin-top: 0;
@@ -245,6 +241,10 @@ form input[type="text"] {
   width: 150px;
   height: 100%;
   font-size: 14px;
+}
+
+#project {
+  width: 197px;
 }
 
 #main {

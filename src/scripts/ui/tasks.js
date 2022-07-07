@@ -42,13 +42,7 @@ function createTasksContainer() {
   return container;
 }
 
-function createTaskElement({
-  title,
-  dueDate,
-  priority,
-  projectName,
-  index, // TODO: May want to use this to handle a deletion event instead - see below
-}) {
+function createTaskElement({ title, dueDate, priority, projectName, index }) {
   // returns the task elements with relevant buttons etc.
   const listItem = document.createElement("li");
   listItem.className = "task";
@@ -61,6 +55,7 @@ function createTaskElement({
       dueDate,
       priority,
       projectName,
+      index,
     })
   );
 
@@ -87,7 +82,7 @@ function createTaskElement({
     a closure of an anonymous function with the variables of the projectName and taskIndex bound???
     */
   elPriority.addEventListener("click", () =>
-    PubSub.publish("/completeTask", { projectName, title })
+    PubSub.publish("/completeTask", { projectName, index })
   );
 
   // Split off into another function???

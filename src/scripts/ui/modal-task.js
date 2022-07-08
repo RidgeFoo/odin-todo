@@ -229,6 +229,6 @@ function sendFormData() {
 
 PubSub.subscribe("/addTaskModal", addTask);
 PubSub.subscribe("/editTaskModal", editTask);
-PubSub.subscribe("/renderProjects", updateProjectList);
+PubSub.subscribe("/projectListUpdated", updateProjectList);
 
 export default modal;

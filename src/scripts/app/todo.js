@@ -5,13 +5,14 @@ import { endOfToday, add } from "date-fns";
 
 // Uses an object to prevent projects with the same name being added
 const _projects = {};
+let _currentFilterTitle;
 let _tasksFilterApplied; // could this reference a function that we use as a callback when rendering tasks???
 
 function addProject(name, tasks) {
   // tasks is optional really
   if (name in _projects) return;
   _projects[name] = Project(name, tasks);
-  PubSub.publish("/renderProjects", getProjectNames());
+  _publishProjectListUpdated();
 }
 
 function getProjectsAll() {
@@ -27,7 +28,14 @@ function getProject(name) {
 }
 
 function removeProject(name) {
-  _projects = delete _projects[name];
+  delete _projects[name];
+
+  if (_currentFilterTitle === name) {
+    _currentFilterTitle = "All Tasks";
+    _setTaskFilter();
+  }
+  _publishProjectListUpdated();
+  _publishTaskListUpdated();
 }
 
 function addTask({ projectName, title, dueDate, priority }) {
@@ -72,9 +80,10 @@ function _subscribeToCreateTask() {
   });
 }
 
-function _setTaskFilter(type = "All", filterValue) {
+function _setTaskFilter(type = "All Tasks", filterValue) {
   // This will be called by a PubSub subscription and when we initialise the app
-  if (type === "All") {
+  _currentFilterTitle = filterValue || type;
+  if (type === "All Tasks") {
     _tasksFilterApplied = getAllTasks;
   } else if (type === "/filterByProject") {
     _tasksFilterApplied = () => getTasksByProject(filterValue);
@@ -85,10 +94,19 @@ function _setTaskFilter(type = "All", filterValue) {
   }
 
   _publishTaskListUpdated();
+  _publishCurrentlySetFilter();
 }
 
 function _publishTaskListUpdated() {
   PubSub.publish("/taskListUpdated", _tasksFilterApplied());
+}
+
+function _publishProjectListUpdated() {
+  PubSub.publish("/projectListUpdated", getProjectNames());
+}
+
+function _publishCurrentlySetFilter() {
+  PubSub.publish("/taskFilterUpdated", _currentFilterTitle);
 }
 
 function _getTasksDueToday() {
@@ -113,17 +131,19 @@ function init(json) {
   projects.forEach((project) => {
     addProject(project.name, project.tasks);
   });
-  _setTaskFilter();
   _subscribeToCreateTask();
+  _setTaskFilter();
 
   PubSub.subscribe("/filterByProject", _setTaskFilter);
   PubSub.subscribe("/filterByPeriod", _setTaskFilter);
   PubSub.subscribe("/completeTask", removeTask);
-  PubSub.publish("/renderTasks", _tasksFilterApplied());
-  PubSub.publish("/renderProjects", getProjectNames());
+  _publishProjectListUpdated();
   PubSub.subscribe("/editTask", _editTask);
   PubSub.subscribe("/createProject", (topic, projectName) =>
     addProject(projectName)
+  );
+  PubSub.subscribe("/removeProject", (topic, projectName) =>
+    removeProject(projectName)
   );
 }
 

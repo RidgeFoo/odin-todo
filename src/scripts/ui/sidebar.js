@@ -4,10 +4,12 @@ import svgUpcoming from "../../images/calendar-days-solid.svg";
 import svgChevronDown from "../../images/chevron-down-solid.svg";
 import svgChevronRight from "../../images/chevron-right-solid.svg";
 import svgAdd from "../../images/plus-solid.svg";
+import svgTrash from "../../images/trash-can-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 import tippy from "tippy.js";
 import { showModal as showProjectModal } from "./modal-project";
+import { getSvgElement } from "./helpers";
 
 const quickFilters = [
   { name: "Inbox", svg: svgInbox, topic: "/filterByProject" },
@@ -15,7 +17,7 @@ const quickFilters = [
   { name: "Upcoming", svg: svgUpcoming, topic: "/filterByPeriod" },
 ];
 
-PubSub.subscribe("/renderProjects", renderProjects);
+PubSub.subscribe("/projectListUpdated", renderProjects);
 
 const initialProjectToggleStatus = getProjectToggleStatus() || false;
 const quickFilterContainer = createQuickFilterContainer();
@@ -35,7 +37,6 @@ function createProjectList() {
 
 function renderProjects(topic, projects) {
   // Projects is an array of names for the time being
-  console.log("Rendering new projects");
   clearChildElements(projectList);
   projects
     .filter((i) => i !== "Inbox") // A bit messy doing something like this
@@ -45,10 +46,20 @@ function renderProjects(topic, projects) {
 }
 
 function createProjectElement(name) {
+  const svg = getSvgElement(svgTrash);
+  svg.classList.add("project-delete");
+  svg.addEventListener("click", (event) => {
+    event.stopPropagation();
+    PubSub.publish("/removeProject", name);
+  });
+
   const el = document.createElement("li");
   el.className = "project-filter";
   el.textContent = name;
   el.addEventListener("click", () => PubSub.publish("/filterByProject", name));
+
+  el.appendChild(svg);
+
   return el;
 }
 
@@ -138,10 +149,10 @@ function createDropDownChevronContainer() {
 
 function getDropDownChevron(isDisplayed) {
   // Based on whether the user last toggled to display the projects we should use the that value
-  const template = document.createElement("template");
-  template.innerHTML = isDisplayed ? svgChevronDown : svgChevronRight;
-  template.content.firstChild.id = "chevron";
-  return template.content.firstChild;
+  const svg = isDisplayed ? svgChevronDown : svgChevronRight;
+  const el = getSvgElement(svg);
+  el.id = "chevron";
+  return el;
 }
 
 function toggleProjectsDropDown() {

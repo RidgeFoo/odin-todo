@@ -2,15 +2,10 @@
 
 ## To Do:
 
-- [x] Fix the button toggle - may want to render them the same way as everything else
-- [x] Fix deleting a task - index isn't being passed around correctly
-- [x] Edit a task - it works but is a bit messy really and not as efficient as it could be
+- [x] Delete a project - sidebar svg?
+- [ ] Make sure to add attributions in the footer area
 - [ ] Storage and initialising from storage needs to be done
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
-- [ ] Add a project from the sidebar
-- [ ] Delete a project
-- [x] Fix upcoming and today filters
-- [ ] Make sure to add attributions in the footer area
 
 ### Nice to haves:
 

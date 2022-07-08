@@ -1,14 +1,12 @@
 import svgAdd from "../../images/plus-solid.svg";
 import svgCircle from "../../images/circle-solid.svg";
 import svgCircleCheck from "../../images/circle-check-solid.svg";
-//import svgEdit from "../../images/pen-to-square-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 import { el } from "date-fns/locale";
 
 PubSub.subscribe("/taskListUpdated", renderTasks);
-PubSub.subscribe("/filterByProject", setMainTitle);
-PubSub.subscribe("/filterByPeriod", setMainTitle);
+PubSub.subscribe("/taskFilterUpdated", setMainTitle);
 
 const addTaskButton = createAddTaskButton();
 const taskList = createTaskListContainer();
@@ -112,7 +110,7 @@ function renderTasks(topic, tasks) {
   taskList.append(...taskElements);
 }
 
-function createMainTitle(title = "Tasks") {
+function createMainTitle(title = "All Tasks") {
   // TODO: Title should reflect the project / filter selected
   const elTitle = document.createElement("h1");
   elTitle.textContent = title;

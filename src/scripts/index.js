@@ -11,8 +11,9 @@ import todo from "./app/todo";
 
 import header from "./ui/header";
 import sidebar from "./ui/sidebar";
-import modal from "./ui/modal-task";
+import taskModal from "./ui/modal-task";
 import tasks from "./ui/tasks";
+import projectModal from "./ui/modal-project";
 
 // TODO: Tidy this up eventually
 window.Todo = todo;
@@ -20,4 +21,4 @@ window.Todo = todo;
 todo.init(dummyData);
 
 const body = document.querySelector("body");
-body.append(header, sidebar, tasks, modal);
+body.append(header, sidebar, tasks, taskModal, projectModal);

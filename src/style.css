@@ -69,7 +69,7 @@ footer {
   padding-top: 30px;
   padding-left: 30px;
   padding-bottom: 30px;
-  padding-right: 4px;
+  padding-right: 5px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -97,7 +97,7 @@ footer {
 #btn-cancel,
 .task-property input,
 .task-property select,
-#btn-add-task.form-valid,
+.btn-save.form-valid,
 .project-filter:hover,
 #add-project {
   cursor: pointer;
@@ -213,13 +213,13 @@ form input[type="text"] {
   border: none;
 }
 
-#modal-buttons {
+.modal-buttons {
   display: flex;
   gap: 10px;
   justify-content: end;
 }
 
-#modal-buttons button {
+.modal-buttons button {
   width: 80px;
   font-size: 13px;
   font-weight: 600;
@@ -227,20 +227,25 @@ form input[type="text"] {
   padding: 8px 12px 8px 12px;
 }
 
-#btn-cancel {
+.btn-cancel {
   background-color: rgb(245, 245, 245);
   border: none;
   color: rgb(68, 68, 68);
 }
 
-#btn-add-task {
+.btn-save {
   border: none;
   color: white;
   background-color: rgba(219, 76, 63, 0.4);
   cursor: not-allowed;
 }
 
-#btn-add-task.form-valid {
+form:valid .btn-save {
+  background-color: rgb(219, 76, 63);
+  cursor: pointer;
+}
+
+.btn-save.form-valid {
   background-color: rgb(219, 76, 63);
 }
 

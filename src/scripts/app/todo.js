@@ -122,6 +122,9 @@ function init(json) {
   PubSub.publish("/renderTasks", _tasksFilterApplied());
   PubSub.publish("/renderProjects", getProjectNames());
   PubSub.subscribe("/editTask", _editTask);
+  PubSub.subscribe("/createProject", (topic, projectName) =>
+    addProject(projectName)
+  );
 }
 
 export default {

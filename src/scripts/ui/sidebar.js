@@ -7,6 +7,7 @@ import svgAdd from "../../images/plus-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 import tippy from "tippy.js";
+import { showModal as showProjectModal } from "./modal-project";
 
 const quickFilters = [
   { name: "Inbox", svg: svgInbox, topic: "/filterByProject" },
@@ -110,7 +111,7 @@ function createAddProjectButton() {
   const btn = document.createElement("button");
   btn.id = "add-project";
   btn.innerHTML = svgAdd;
-  btn.addEventListener("click", (event) => console.log(event));
+  btn.addEventListener("click", showProjectModal);
   tippy(btn, { content: "Add project", arrow: false });
   return btn;
 }

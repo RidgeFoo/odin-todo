@@ -9,17 +9,14 @@ let originalTask; // used when we are editing a task so that we can remove the "
 const buttons = [
   {
     type: "submit",
-    id: "btn-add-task",
+    className: "btn-save",
     text: "Save",
   },
   {
     type: "reset",
-    id: "btn-cancel",
+    className: "btn-cancel",
     text: "Cancel",
-    funcEventListener: () => {
-      modal.close();
-      toggleButtonColour();
-    },
+    funcEventListener: () => modal.close(),
   },
 ];
 
@@ -30,7 +27,7 @@ const defaultTaskObject = {
   dueDate: null,
 };
 
-const [btnAdd, btnCancel] = buttons.map(createButtonElement);
+const [btnSave, btnCancel] = buttons.map(createButtonElement);
 
 let taskPropertiesContainer;
 let inputTitle;
@@ -42,10 +39,10 @@ let form;
 const buttonContainer = createButtonContainer();
 const modal = createModal();
 
-function createButtonElement({ type, id, text, funcEventListener }) {
+function createButtonElement({ type, className, text, funcEventListener }) {
   const button = document.createElement("button");
   button.setAttribute("type", type);
-  button.id = id;
+  button.className = className;
   button.textContent = text;
   if (funcEventListener) button.addEventListener("click", funcEventListener);
   return button;
@@ -62,8 +59,8 @@ function getFormValidity() {
 
 function createButtonContainer() {
   const container = document.createElement("div");
-  container.id = "modal-buttons";
-  container.append(btnCancel, btnAdd);
+  container.className = "modal-buttons";
+  container.append(btnCancel, btnSave);
   return container;
 }
 
@@ -170,14 +167,6 @@ function renderProjectDropDown(currentProject = null) {
   projectDropDown = container;
 }
 
-function toggleButtonColour() {
-  if (getFormValidity()) {
-    btnAdd.classList.add("form-valid");
-  } else {
-    btnAdd.classList.remove("form-valid");
-  }
-}
-
 function renderTaskPropertiesContainer() {
   const container = document.createElement("div");
   container.id = "modal-task-properties";
@@ -188,13 +177,11 @@ function renderTaskPropertiesContainer() {
 function renderForm() {
   form = document.createElement("form");
   form.setAttribute("method", "dialog");
-  form.addEventListener("change", toggleButtonColour);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (getFormValidity()) {
       sendFormData();
-      toggleButtonColour();
       modal.close();
     }
   });
@@ -212,7 +199,6 @@ function renderInputs({ projectName, title, dueDate, priority }) {
 function renderModal(taskObj) {
   renderForm();
   renderInputs(taskObj);
-  toggleButtonColour();
   clearChildElements(modal);
   modal.append(form);
   modal.showModal();
@@ -230,8 +216,6 @@ function addTask(topic) {
 }
 
 function sendFormData() {
-  /* TODO: This could check if it is an edit or create task modal type
-    If an edit then it needs to also publish a remove task event for the "original" task */
   const formData = Object.fromEntries(new FormData(form));
   if (isEdit) {
     PubSub.publish("/editTask", {

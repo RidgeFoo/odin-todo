@@ -3,8 +3,10 @@ import svgToday from "../../images/calendar-day-solid.svg";
 import svgUpcoming from "../../images/calendar-days-solid.svg";
 import svgChevronDown from "../../images/chevron-down-solid.svg";
 import svgChevronRight from "../../images/chevron-right-solid.svg";
+import svgAdd from "../../images/plus-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
+import tippy from "tippy.js";
 
 const quickFilters = [
   { name: "Inbox", svg: svgInbox, topic: "/filterByProject" },
@@ -17,8 +19,10 @@ PubSub.subscribe("/renderProjects", renderProjects);
 const initialProjectToggleStatus = getProjectToggleStatus() || false;
 const quickFilterContainer = createQuickFilterContainer();
 const projectList = createProjectList();
+const addProjectButton = createAddProjectButton();
 const dropDownChevronContainer = createDropDownChevronContainer();
 const projectDropDown = createProjectDropDown();
+const projectsHeader = createProjectsHeader();
 const projectsContainer = createProjectsContainer();
 
 function createProjectList() {
@@ -82,7 +86,6 @@ function createQuickFilter(name, svg, topic) {
   label.className = "quick-filter-label";
 
   quickFilter.append(label);
-  // TODO: Change this!
   quickFilter.addEventListener("click", () => PubSub.publish(topic, name));
 
   return quickFilter;
@@ -92,13 +95,29 @@ function createProjectsContainer() {
   const container = document.createElement("div");
   container.id = "projects-container";
 
-  container.append(projectDropDown, projectList);
+  container.append(projectsHeader, projectList);
   return container;
+}
+
+function createProjectsHeader() {
+  const div = document.createElement("div");
+  div.id = "projects-header";
+  div.append(projectDropDown, addProjectButton);
+  return div;
+}
+
+function createAddProjectButton() {
+  const btn = document.createElement("button");
+  btn.id = "add-project";
+  btn.innerHTML = svgAdd;
+  btn.addEventListener("click", (event) => console.log(event));
+  tippy(btn, { content: "Add project", arrow: false });
+  return btn;
 }
 
 function createProjectDropDown() {
   const dropDown = document.createElement("button");
-  dropDown.id = "project-drop-down";
+  dropDown.id = "project-dropdown";
 
   const label = document.createElement("span");
   label.className = "project-label";

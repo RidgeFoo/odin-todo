@@ -90,7 +90,7 @@ footer {
 }
 
 .quick-filter,
-#project-drop-down,
+#project-dropdown,
 #tasks-add-task,
 .task,
 #add-task,
@@ -98,13 +98,15 @@ footer {
 .task-property input,
 .task-property select,
 #btn-add-task.form-valid,
-.project-filter:hover {
+.project-filter:hover,
+#add-project {
   cursor: pointer;
 }
 
 #add-task,
-#project-drop-down,
-.quick-filter {
+#project-dropdown,
+.quick-filter,
+#add-project {
   background-color: transparent;
   border: transparent;
   border-radius: 8px;
@@ -128,24 +130,46 @@ footer {
   width: 18px;
 }
 
-#project-drop-down {
+#projects-header {
+  display: flex;
+  align-items: center;
   font-weight: 600;
   width: 100%;
 }
 
+#add-project:hover {
+  background-color: var(--color-sidebar-hover);
+}
+
+#add-project {
+  border-radius: 4px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+#add-project > svg {
+  height: 100%;
+  width: 100%;
+}
+
 .quick-filter,
-#project-drop-down,
+#project-dropdown,
 .project-filter {
   border-radius: 5px;
 }
 
 .quick-filter,
-#project-drop-down {
+#project-dropdown {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 5px 0px 5px 7px;
   text-align: start;
+  flex: 1;
 }
 
 #project-list {

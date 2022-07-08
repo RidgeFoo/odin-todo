@@ -9,6 +9,7 @@
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
 - [ ] Add a project from the sidebar
 - [ ] Delete a project
+- [x] Fix upcoming and today filters
 - [ ] Make sure to add attributions in the footer area
 
 ### Nice to haves:

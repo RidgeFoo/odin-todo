@@ -93,13 +93,13 @@ function _publishTaskListUpdated() {
 
 function _getTasksDueToday() {
   // Get tasks due today and in the past that are not complete
-  return getAllTasks().filter((task) => task.taskDueDate <= endOfToday());
+  return getAllTasks().filter((task) => task.dueDate <= endOfToday());
 }
 
 function _getTasksDueWithin7Days() {
   // Used with the Upcoming filter
   return getAllTasks().filter(
-    (task) => task.taskDueDate <= add(new Date(), { days: 7 })
+    (task) => task.dueDate <= add(new Date(), { days: 7 })
   );
 }
 

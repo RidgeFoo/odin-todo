@@ -24,7 +24,7 @@ function createLogo() {
 function createAddTask() {
   const btnAddTask = document.createElement("button");
   btnAddTask.id = "add-task";
-  tippy(btnAddTask, { content: "Add Task", arrow: false, delay: [100, 200] });
+  tippy(btnAddTask, { content: "Add Task", arrow: false });
 
   btnAddTask.innerHTML = svgPlus;
 

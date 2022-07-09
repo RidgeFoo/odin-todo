@@ -11,11 +11,12 @@ import sidebar from "./ui/sidebar";
 import taskModal from "./ui/modal-task";
 import tasks from "./ui/tasks";
 import projectModal from "./ui/modal-project";
-import dummyData from "./app/dummy-data.json";
 
-todo.init(dummyData);
+todo.init();
 
 window.todo = todo;
 
 const body = document.querySelector("body");
 body.append(header, sidebar, tasks, taskModal, projectModal);
+
+window.addEventListener("beforeunload", todo.saveToLocalStorage);

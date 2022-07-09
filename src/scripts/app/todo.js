@@ -133,16 +133,21 @@ function toJSON() {
   return JSON.stringify(todoObj);
 }
 
-function init(json) {
-  /*
-    Takes a JSON representation of projects and initialise the objects as needed in memory.
-    Most likely used with local storage to initialise objects.
-    See README for an example spec
-    */
-  const projects = JSON.parse(json).projects;
+function saveToLocalStorage() {
+  localStorage.setItem("todo", toJSON());
+}
+
+function loadFromStorage() {
+  // if (!localStorage.getItem("todo")) return;
+
+  const projects = JSON.parse(localStorage.getItem("todo")).projects;
   projects.forEach((project) => {
     addProject(project.name, project.tasks);
   });
+}
+
+function init() {
+  loadFromStorage();
   _subscribeToCreateTask();
   _setTaskFilter();
 
@@ -169,4 +174,5 @@ export default {
   getAllTasks,
   init,
   toJSON,
+  saveToLocalStorage,
 };

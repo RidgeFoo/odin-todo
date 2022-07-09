@@ -20,5 +20,3 @@ function toggleStorageValue(topic, key) {
 PubSub.subscribe("/toggleStorageValue", toggleStorageValue);
 
 export default { populateStorageWithDefaults };
-
-// Maybe put the serialisation logic in here for projects and tasks?

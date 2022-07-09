@@ -3,7 +3,7 @@ export default function Task(taskTitle, dueDate, priority) {
   let _dueDate = new Date(dueDate);
   let _priority = priority;
 
-  function getTaskDetails() {
+  function getDetails() {
     return {
       title: _title,
       dueDate: _dueDate,
@@ -12,6 +12,6 @@ export default function Task(taskTitle, dueDate, priority) {
   }
 
   return {
-    getTaskDetails,
+    getDetails,
   };
 }

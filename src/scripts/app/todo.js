@@ -121,6 +121,18 @@ function _getTasksDueWithin7Days() {
   );
 }
 
+function toJSON() {
+  const todoObj = { projects: [] };
+  for (const key in _projects) {
+    const projectObj = {
+      name: key,
+      tasks: _projects[key].getTasks().map((task) => task.getDetails()),
+    };
+    todoObj.projects.push(projectObj);
+  }
+  return JSON.stringify(todoObj);
+}
+
 function init(json) {
   /*
     Takes a JSON representation of projects and initialise the objects as needed in memory.
@@ -156,4 +168,5 @@ export default {
   removeTask,
   getAllTasks,
   init,
+  toJSON,
 };

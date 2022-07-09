@@ -44,7 +44,7 @@ export default function Project(name, taskList) {
 
   function getTaskDetailsAll() {
     return _tasks.map((task, index) =>
-      Object.assign({ projectName: _name, index }, task.getTaskDetails())
+      Object.assign({ projectName: _name, index }, task.getDetails())
     );
   }
 
@@ -56,13 +56,6 @@ export default function Project(name, taskList) {
     _tasks.splice(index, 1);
   }
 
-  function toJSON() {
-    return JSON.stringify({
-      name: _name,
-      tasks: _tasks.map((task) => task.getTaskDetails()),
-    });
-  }
-
   return {
     getName,
     setName,
@@ -70,6 +63,5 @@ export default function Project(name, taskList) {
     getTaskDetailsAll,
     addTask,
     removeTask,
-    toJSON,
   };
 }

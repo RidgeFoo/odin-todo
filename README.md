@@ -2,10 +2,11 @@
 
 ## To Do:
 
-- [ ] Storage and initialising from storage needs to be done
+- [x] Storage and initialising from storage needs to be done
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
 - [ ] Make sure to add attributions in the footer area
 - [ ] Clean up the initialisation
+- [ ] General code clean up
 
 ### Nice to haves:
 

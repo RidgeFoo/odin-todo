@@ -2,10 +2,10 @@
 
 ## To Do:
 
-- [x] Delete a project - sidebar svg?
-- [ ] Make sure to add attributions in the footer area
 - [ ] Storage and initialising from storage needs to be done
   - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
+- [ ] Make sure to add attributions in the footer area
+- [ ] Clean up the initialisation
 
 ### Nice to haves:
 
@@ -13,8 +13,6 @@
 - [ ] Don't just delete completed tasks but "archive" them and make them visible using a checkbox or something like that.
 - [ ] Adding a home button that shows all tasks.
 - [ ] Hiding and showing the sidebar.
-- [ ] Inbox should be the default project when adding tasks. Users shouldn't have to select a project when adding a task.
-- [ ] Adding project from the sidebar area.
 - [ ] Task sorting could be better.
 - [ ] Add a toggle for the sidebar.
 

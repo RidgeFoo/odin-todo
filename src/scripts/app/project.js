@@ -33,11 +33,6 @@ export default function Project(name, taskList) {
     return _name;
   }
 
-  function setName(name) {
-    _name = projectName;
-    return _name;
-  }
-
   function getTasks() {
     return _tasks;
   }
@@ -58,7 +53,6 @@ export default function Project(name, taskList) {
 
   return {
     getName,
-    setName,
     getTasks,
     getTaskDetailsAll,
     addTask,

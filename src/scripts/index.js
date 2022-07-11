@@ -5,18 +5,16 @@ import html from "../index.html";
 import defaults from "./app/default-values";
 
 import todo from "./app/todo";
-
 import header from "./ui/header";
 import sidebar from "./ui/sidebar";
 import taskModal from "./ui/modal-task";
 import tasks from "./ui/tasks";
 import projectModal from "./ui/modal-project";
 
+// Initiliase the app logic
 todo.init();
 
-window.todo = todo;
-
-const body = document.querySelector("body");
-body.append(header, sidebar, tasks, taskModal, projectModal);
-
-window.addEventListener("beforeunload", todo.saveToLocalStorage);
+// Initialise the UI
+document
+  .querySelector("body")
+  .append(header, sidebar, tasks, taskModal, projectModal);

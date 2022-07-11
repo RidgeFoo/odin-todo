@@ -2,7 +2,7 @@
 
 :root {
   --font-family: "Source Sans Pro", sans-serif;
-  --footer-header-height: 44px;
+  --header-height: 44px;
   --sidebar-font-size: 14px;
   --header-bg-color-hover: hsla(0, 0%, 100%, 0.2);
   --header-bg-primary: #dc4c3e;
@@ -21,10 +21,9 @@
 body {
   display: grid;
   grid-template-columns: 305px auto;
+  height: 100vh;
   font-family: var(--font-family);
-  grid-template-rows: var(--footer-header-height) auto var(
-      --footer-header-height
-    );
+  grid-template-rows: var(--header-height) auto;
 }
 
 header {

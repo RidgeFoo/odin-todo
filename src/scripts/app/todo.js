@@ -9,7 +9,6 @@ let _currentFilterTitle;
 let _tasksFilterApplied; // could this reference a function that we use as a callback when rendering tasks???
 
 function addProject(name, tasks) {
-  // tasks is optional really
   if (name in _projects) return;
   _projects[name] = Project(name, tasks);
   _publishProjectListUpdated();
@@ -162,6 +161,8 @@ function init() {
   PubSub.subscribe("/removeProject", (topic, projectName) =>
     removeProject(projectName)
   );
+
+  window.addEventListener("beforeunload", saveToLocalStorage);
 }
 
 export default {

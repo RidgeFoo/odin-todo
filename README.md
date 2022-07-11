@@ -1,19 +1,11 @@
 # Odin - Todo Project
 
-## To Do:
+## Nice to haves:
 
-- [x] Storage and initialising from storage needs to be done
-  - Save to storage every time a task is added or deleted or when the user closes the tab if possible???
-- [ ] Make sure to add attributions in the footer area
-- [ ] Clean up the initialisation
-- [ ] General code clean up
-
-### Nice to haves:
-
-- [ ] Come up with a better way of handling the toggling and initialisation of the project dropdown list - feels messy currently but works.
+- [ ] General refactor.
 - [ ] Don't just delete completed tasks but "archive" them and make them visible using a checkbox or something like that.
 - [ ] Adding a home button that shows all tasks.
-- [ ] Hiding and showing the sidebar.
+- [ ] Toggling the sidebar.
 - [ ] Task sorting could be better.
 - [ ] Add a toggle for the sidebar.
 

@@ -9,11 +9,10 @@ const devConfig = {
     static: {
       directory: path.resolve(__dirname, "dist"),
     },
-    // port: 3000,
-    // open: true,
-    // hot: true,
-    // compress: true,
-    // historyApiFallback: true,
+    port: 3000,
+    hot: true,
+    compress: true,
+    historyApiFallback: true,
   },
 };
 

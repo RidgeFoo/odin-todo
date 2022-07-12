@@ -1,5 +1,5 @@
 // Storage for topics that can be broadcast or listened to
-let topics = {};
+const topics = {};
 // A topic identifier
 let subUid = -1;
 
@@ -13,13 +13,10 @@ function publish(topic, args) {
 
   // Loop over the subscribers to the topic and call their registered functions passing in the args
   // We expect the callback functions to take the topic and the args
-  for (let subscriber of subscribers) {
-    // The function we need to call has the key func as per the definition of the subscribe function
-    subscriber.func(topic, args);
-  }
+  subscribers.forEach((subscriber) => subscriber.func(topic, args));
   // Getting rid of returning the entire PubSub object
   // every time publish is called not sure why they did that
-  // return this;
+  return this;
 }
 
 function subscribe(topic, func) {
@@ -29,12 +26,12 @@ function subscribe(topic, func) {
   }
 
   // Generate a token which we use to handle unsubscribing functions from topics
-  const token = (++subUid).toString();
+  const token = (subUid += 1).toString();
 
   // In the topics object we now have a key for the topic name.
   // In the array of the topic we add an object with the token and function to call
   topics[topic].push({ token, func });
-  // return token;
+  return token;
 }
 
 const PubSub = {

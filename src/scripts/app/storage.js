@@ -11,7 +11,7 @@ function populateStorageWithDefaults(defaults) {
 function toggleStorageValue(topic, key) {
   const currentValue = JSON.parse(localStorage.getItem(key));
 
-  if (typeof currentValue !== Boolean)
+  if (typeof currentValue !== "boolean")
     Error("The value you are trying to toggle is not a boolean");
 
   localStorage.setItem(key, JSON.stringify(!currentValue));

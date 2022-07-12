@@ -180,7 +180,7 @@ var code = "<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"/> 
 /* harmony default export */ const src = ((/* unused pure expression or super */ null && (code)));
 ;// CONCATENATED MODULE: ./src/scripts/app/pubsub.js
 // Storage for topics that can be broadcast or listened to
-let topics = {};
+const topics = {};
 // A topic identifier
 let subUid = -1;
 
@@ -194,13 +194,10 @@ function publish(topic, args) {
 
   // Loop over the subscribers to the topic and call their registered functions passing in the args
   // We expect the callback functions to take the topic and the args
-  for (let subscriber of subscribers) {
-    // The function we need to call has the key func as per the definition of the subscribe function
-    subscriber.func(topic, args);
-  }
+  subscribers.forEach((subscriber) => subscriber.func(topic, args));
   // Getting rid of returning the entire PubSub object
   // every time publish is called not sure why they did that
-  // return this;
+  return this;
 }
 
 function subscribe(topic, func) {
@@ -210,12 +207,12 @@ function subscribe(topic, func) {
   }
 
   // Generate a token which we use to handle unsubscribing functions from topics
-  const token = (++subUid).toString();
+  const token = (subUid += 1).toString();
 
   // In the topics object we now have a key for the topic name.
   // In the array of the topic we add an object with the token and function to call
   topics[topic].push({ token, func });
-  // return token;
+  return token;
 }
 
 const PubSub = {
@@ -239,7 +236,7 @@ function populateStorageWithDefaults(defaults) {
 function toggleStorageValue(topic, key) {
   const currentValue = JSON.parse(localStorage.getItem(key));
 
-  if (typeof currentValue !== Boolean)
+  if (typeof currentValue !== "boolean")
     Error("The value you are trying to toggle is not a boolean");
 
   localStorage.setItem(key, JSON.stringify(!currentValue));
@@ -261,88 +258,6 @@ const defaults = [
 ];
 
 storage.populateStorageWithDefaults(defaults);
-
-;// CONCATENATED MODULE: ./src/scripts/app/task.js
-function Task(taskTitle, dueDate, priority) {
-  let _title = taskTitle;
-  let _dueDate = new Date(dueDate);
-  let _priority = priority;
-
-  function getDetails() {
-    return {
-      title: _title,
-      dueDate: _dueDate,
-      priority: _priority,
-    };
-  }
-
-  return {
-    getDetails,
-  };
-}
-
-;// CONCATENATED MODULE: ./src/scripts/app/project.js
-
-
-function Project(name, taskList) {
-  // We need to rebuild projects and their methods from data held in the LocalStorage
-  // Tasks is an array of objects with the relevant properties
-  let _name = name;
-  let _tasks = processTasks(taskList);
-
-  function processTasks(taskList) {
-    /*
-    Primarily use to load tasks from local storage
-    Expects an array with objects with properties:
-    [
-      {
-      "title": "Task 1",
-      "dueDate": "2020-01-01",
-      "priority": "Low"
-      }
-    ]
-    */
-    if (!Array.isArray(taskList)) return [];
-
-    const list = [];
-
-    taskList.forEach((task) =>
-      list.push(new Task(task.title, task.dueDate, task.priority))
-    );
-
-    return list;
-  }
-
-  function getName() {
-    return _name;
-  }
-
-  function getTasks() {
-    return _tasks;
-  }
-
-  function getTaskDetailsAll() {
-    return _tasks.map((task, index) =>
-      Object.assign({ projectName: _name, index }, task.getDetails())
-    );
-  }
-
-  function addTask(title, dueDate, priority) {
-    _tasks.push(Task(title, dueDate, priority));
-  }
-
-  function removeTask(index) {
-    _tasks.splice(index, 1);
-  }
-
-  return {
-    getName,
-    getTasks,
-    getTaskDetailsAll,
-    addTask,
-    removeTask,
-  };
-}
 
 ;// CONCATENATED MODULE: ./node_modules/date-fns/esm/_lib/requiredArgs/index.js
 function requiredArgs(required, args) {
@@ -660,6 +575,87 @@ function add(dirtyDate, duration) {
   var finalDate = new Date(dateWithDays.getTime() + msToAdd);
   return finalDate;
 }
+;// CONCATENATED MODULE: ./src/scripts/app/task.js
+function Task(title, dueDate, priority) {
+  function getDetails() {
+    return {
+      title,
+      dueDate: new Date(dueDate),
+      priority,
+    };
+  }
+
+  return {
+    getDetails,
+  };
+}
+
+;// CONCATENATED MODULE: ./src/scripts/app/project.js
+
+
+function Project(name, taskList) {
+  // We need to rebuild projects and their methods from data held in the LocalStorage
+  // Tasks is an array of objects with the relevant properties
+  const projectName = name;
+  const tasks = [];
+
+  function processTasks() {
+    /*
+    Primarily use to load tasks from local storage
+    Expects an array with objects with properties:
+    [
+      {
+      "title": "Task 1",
+      "dueDate": "2020-01-01",
+      "priority": "Low"
+      }
+    ]
+    */
+    if (!Array.isArray(taskList)) return;
+
+    taskList.forEach((task) =>
+      tasks.push(new Task(task.title, task.dueDate, task.priority))
+    );
+  }
+
+  function getName() {
+    return name;
+  }
+
+  function getTasks() {
+    return tasks;
+  }
+
+  function getTaskDetailsAll() {
+    return tasks.map((task, index) => {
+      const taskDetails = task.getDetails();
+      return {
+        projectName,
+        index,
+        ...taskDetails,
+      };
+    });
+  }
+
+  function addTask(title, dueDate, priority) {
+    tasks.push(Task(title, dueDate, priority));
+  }
+
+  function removeTask(index) {
+    tasks.splice(index, 1);
+  }
+
+  processTasks(taskList);
+
+  return {
+    getName,
+    getTasks,
+    getTaskDetailsAll,
+    addTask,
+    removeTask,
+  };
+}
+
 ;// CONCATENATED MODULE: ./src/scripts/app/todo.js
 // import Sherlock from "sherlockjs";
 
@@ -667,55 +663,43 @@ function add(dirtyDate, duration) {
 
 
 // Uses an object to prevent projects with the same name being added
-const _projects = {};
-let _currentFilterTitle;
-let _tasksFilterApplied; // could this reference a function that we use as a callback when rendering tasks???
+const projects = {};
+let currentFilterTitle;
+let tasksFilterApplied;
 
-function addProject(name, tasks) {
-  if (name in _projects) return;
-  _projects[name] = Project(name, tasks);
-  _publishProjectListUpdated();
+function publishTaskListUpdated() {
+  pubsub.publish("/taskListUpdated", tasksFilterApplied());
 }
 
-function getProjectsAll() {
-  return _projects;
+function removeTask(topic, { projectName, index }) {
+  projects[projectName].removeTask(index);
+  publishTaskListUpdated();
 }
 
 function getProjectNames() {
-  return Object.keys(_projects);
+  return Object.keys(projects);
+}
+
+function publishProjectListUpdated() {
+  pubsub.publish("/projectListUpdated", getProjectNames());
+}
+
+function addProject(name, tasks) {
+  if (name in projects) return;
+  projects[name] = Project(name, tasks);
+  publishProjectListUpdated();
+}
+
+function getProjectsAll() {
+  return projects;
 }
 
 function getProject(name) {
-  return _projects[name];
+  return projects[name];
 }
 
-function removeProject(name) {
-  delete _projects[name];
-
-  if (_currentFilterTitle === name) {
-    _currentFilterTitle = "All Tasks";
-    _setTaskFilter();
-  }
-  _publishProjectListUpdated();
-  _publishTaskListUpdated();
-}
-
-function addTask({ projectName, title, dueDate, priority }) {
-  /* We render the task list based on the currently applied filter.
-    If user adds a task that isn't within the current filter then they won't see it immediately.*/
-  addProject(projectName);
-  const project = getProject(projectName);
-  const task = project.addTask(title, dueDate, priority);
-  _publishTaskListUpdated();
-  return task;
-}
-
-function _editTask(topic, { originalTask, editedTask }) {
-  removeTask(null, {
-    projectName: originalTask.projectName,
-    index: originalTask.index,
-  });
-  addTask(editedTask);
+function publishCurrentlySetFilter() {
+  pubsub.publish("/taskFilterUpdated", currentFilterTitle);
 }
 
 function getTasksByProject(projectName) {
@@ -724,74 +708,87 @@ function getTasksByProject(projectName) {
 
 function getAllTasks() {
   // Gets tasks from all projects
-  return Object.values(_projects)
+  return Object.values(projects)
     .map((project) => project.getTaskDetailsAll())
     .flat();
 }
 
-function removeTask(topic, { projectName, index }) {
-  _projects[projectName].removeTask(index);
-  _publishTaskListUpdated();
-}
-
-/* Function that handles the unpacking of the args passed as
-  part of the /addTask topic and passes then to the relevant function */
-function _subscribeToCreateTask() {
-  pubsub.subscribe("/createTask", (topic, taskObj) => {
-    addTask(taskObj);
-  });
-}
-
-function _setTaskFilter(type = "All Tasks", filterValue) {
-  // This will be called by a PubSub subscription and when we initialise the app
-  _currentFilterTitle = filterValue || type;
-  if (type === "All Tasks") {
-    _tasksFilterApplied = getAllTasks;
-  } else if (type === "/filterByProject") {
-    _tasksFilterApplied = () => getTasksByProject(filterValue);
-  } else if ((type === "/filterByPeriod") & (filterValue === "Today")) {
-    _tasksFilterApplied = _getTasksDueToday;
-  } else if ((type === "/filterByPeriod") & (filterValue === "Upcoming")) {
-    _tasksFilterApplied = _getTasksDueWithin7Days;
-  }
-
-  _publishTaskListUpdated();
-  _publishCurrentlySetFilter();
-}
-
-function _publishTaskListUpdated() {
-  pubsub.publish("/taskListUpdated", _tasksFilterApplied());
-}
-
-function _publishProjectListUpdated() {
-  pubsub.publish("/projectListUpdated", getProjectNames());
-}
-
-function _publishCurrentlySetFilter() {
-  pubsub.publish("/taskFilterUpdated", _currentFilterTitle);
-}
-
-function _getTasksDueToday() {
+function getTasksDueToday() {
   // Get tasks due today and in the past that are not complete
   return getAllTasks().filter((task) => task.dueDate <= endOfToday());
 }
 
-function _getTasksDueWithin7Days() {
+function getTasksDueWithin7Days() {
   // Used with the Upcoming filter
   return getAllTasks().filter(
     (task) => task.dueDate <= add(new Date(), { days: 7 })
   );
 }
 
+// eslint-disable-next-line default-param-last
+function setTaskFilter(type = "All Tasks", filterValue) {
+  // This will be called by a PubSub subscription and when we initialise the app
+  currentFilterTitle = filterValue || type;
+  if (type === "All Tasks") {
+    tasksFilterApplied = getAllTasks;
+  } else if (type === "/filterByProject") {
+    tasksFilterApplied = () => getTasksByProject(filterValue);
+  } else if (type === "/filterByPeriod" && filterValue === "Today") {
+    tasksFilterApplied = getTasksDueToday;
+  } else if (type === "/filterByPeriod" && filterValue === "Upcoming") {
+    tasksFilterApplied = getTasksDueWithin7Days;
+  }
+
+  publishTaskListUpdated();
+  publishCurrentlySetFilter();
+}
+
+function removeProject(name) {
+  delete projects[name];
+
+  if (currentFilterTitle === name) {
+    currentFilterTitle = "All Tasks";
+    setTaskFilter();
+  }
+  publishProjectListUpdated();
+  publishTaskListUpdated();
+}
+
+function addTask({ projectName, title, dueDate, priority }) {
+  /* We render the task list based on the currently applied filter.
+    If user adds a task that isn't within the current filter then they won't see it immediately. */
+  addProject(projectName);
+  const project = getProject(projectName);
+  const task = project.addTask(title, dueDate, priority);
+  publishTaskListUpdated();
+  return task;
+}
+
+function editTask(topic, { originalTask, editedTask }) {
+  removeTask(null, {
+    projectName: originalTask.projectName,
+    index: originalTask.index,
+  });
+  addTask(editedTask);
+}
+/* Function that handles the unpacking of the args passed as
+  part of the /addTask topic and passes then to the relevant function */
+function subscribeToCreateTask() {
+  pubsub.subscribe("/createTask", (topic, taskObj) => {
+    addTask(taskObj);
+  });
+}
+
 function toJSON() {
   const todoObj = { projects: [] };
-  for (const key in _projects) {
+
+  Object.keys(projects).forEach((key) => {
     const projectObj = {
       name: key,
-      tasks: _projects[key].getTasks().map((task) => task.getDetails()),
+      tasks: projects[key].getTasks().map((task) => task.getDetails()),
     };
     todoObj.projects.push(projectObj);
-  }
+  });
   return JSON.stringify(todoObj);
 }
 
@@ -800,24 +797,22 @@ function saveToLocalStorage() {
 }
 
 function loadFromStorage() {
-  // if (!localStorage.getItem("todo")) return;
-
-  const projects = JSON.parse(localStorage.getItem("todo")).projects;
-  projects.forEach((project) => {
+  const json = JSON.parse(localStorage.getItem("todo"));
+  json.projects.forEach((project) => {
     addProject(project.name, project.tasks);
   });
 }
 
 function init() {
   loadFromStorage();
-  _subscribeToCreateTask();
-  _setTaskFilter();
+  subscribeToCreateTask();
+  setTaskFilter();
 
-  pubsub.subscribe("/filterByProject", _setTaskFilter);
-  pubsub.subscribe("/filterByPeriod", _setTaskFilter);
+  pubsub.subscribe("/filterByProject", setTaskFilter);
+  pubsub.subscribe("/filterByPeriod", setTaskFilter);
   pubsub.subscribe("/completeTask", removeTask);
-  _publishProjectListUpdated();
-  pubsub.subscribe("/editTask", _editTask);
+  publishProjectListUpdated();
+  pubsub.subscribe("/editTask", editTask);
   pubsub.subscribe("/createProject", (topic, projectName) =>
     addProject(projectName)
   );
@@ -841,10 +836,6 @@ function init() {
   saveToLocalStorage,
 });
 
-;// CONCATENATED MODULE: ./src/images/check-solid.svg
-const check_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z\"/></svg>\n";
-;// CONCATENATED MODULE: ./src/images/plus-solid.svg
-const plus_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z\"/></svg>\n";
 ;// CONCATENATED MODULE: ./node_modules/@popperjs/core/lib/dom-utils/getWindow.js
 function getWindow(node) {
   if (node == null) {
@@ -5282,17 +5273,15 @@ tippy.setDefaultProps({
 
 //# sourceMappingURL=tippy.esm.js.map
 
+;// CONCATENATED MODULE: ./src/images/check-solid.svg
+const check_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z\"/></svg>\n";
+;// CONCATENATED MODULE: ./src/images/plus-solid.svg
+const plus_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z\"/></svg>\n";
 ;// CONCATENATED MODULE: ./src/scripts/ui/header.js
 
 
 
 
-
-function createHeader() {
-  const header = document.createElement("header");
-  header.append(createLogo(), createAddTask());
-  return header;
-}
 
 function createLogo() {
   const logoContainer = document.createElement("div");
@@ -5315,6 +5304,12 @@ function createAddTask() {
 
   btnAddTask.addEventListener("click", () => pubsub.publish("/addTaskModal"));
   return btnAddTask;
+}
+
+function createHeader() {
+  const header = document.createElement("header");
+  header.append(createLogo(), createAddTask());
+  return header;
 }
 
 /* harmony default export */ const header = (createHeader());
@@ -5346,6 +5341,7 @@ function getSvgElement(svg) {
 }
 
 ;// CONCATENATED MODULE: ./src/scripts/ui/modal-project.js
+/* eslint-disable no-use-before-define */
 
 
 const modal = renderModal();
@@ -5406,7 +5402,7 @@ function sendFormData(event) {
 /* harmony default export */ const modal_project = (modal);
 
 ;// CONCATENATED MODULE: ./src/scripts/ui/sidebar.js
-
+/* eslint-disable no-use-before-define */
 
 
 
@@ -5482,16 +5478,16 @@ function createNav() {
 }
 
 function createQuickFilterContainer() {
-  const quickFilterContainer = document.createElement("div");
-  quickFilterContainer.id = "quick-filters";
+  const container = document.createElement("div");
+  container.id = "quick-filters";
 
   quickFilters.forEach((filter) =>
-    quickFilterContainer.appendChild(
+    container.appendChild(
       createQuickFilter(filter.name, filter.svg, filter.topic)
     )
   );
 
-  return quickFilterContainer;
+  return container;
 }
 
 function createQuickFilter(name, svg, topic) {
@@ -5568,9 +5564,11 @@ function toggleProjectsDropDown() {
   pubsub.publish("/toggleStorageValue", "displayProjects");
   const displayProjects = getProjectToggleStatus();
   dropDownChevronContainer.replaceChildren(getDropDownChevron(displayProjects));
-  displayProjects
-    ? projectList.classList.remove("hidden")
-    : projectList.classList.add("hidden");
+  if (displayProjects) {
+    projectList.classList.remove("hidden");
+  } else {
+    projectList.classList.add("hidden");
+  }
 }
 
 function getProjectToggleStatus() {
@@ -5580,6 +5578,7 @@ function getProjectToggleStatus() {
 /* harmony default export */ const sidebar = (createNav());
 
 ;// CONCATENATED MODULE: ./src/scripts/ui/modal-task.js
+/* eslint-disable no-use-before-define */
 
 
 
@@ -5631,8 +5630,7 @@ function createButtonElement({ type, className, text, funcEventListener }) {
 }
 
 function createModal() {
-  const modal = document.createElement("dialog");
-  return modal;
+  return document.createElement("dialog");
 }
 
 function getFormValidity() {
@@ -5666,7 +5664,7 @@ function renderPriorityDropDown(taskPriority = null) {
     option.setAttribute("value", priority);
     option.textContent = priority;
     // For editing task select the current priority level for the task
-    taskPriority === priority ? option.setAttribute("selected", "") : null;
+    if (taskPriority === priority) option.setAttribute("selected", "");
 
     priorities.appendChild(option);
   });
@@ -5715,7 +5713,7 @@ function createProjectListOption(project, currentProject = null) {
   option.textContent = project;
   if (currentProject === project) {
     option.setAttribute("selected", "");
-  } else if (!currentProject & (project === defaultProject)) {
+  } else if (!currentProject && project === defaultProject) {
     option.setAttribute("selected", "");
   }
 
@@ -5735,7 +5733,6 @@ function renderProjectDropDown(currentProject = null) {
   label.textContent = "Project";
   label.setAttribute("for", "projectName");
 
-  const defaultProject = "Inbox";
   const select = document.createElement("select");
   select.id = "project";
   select.setAttribute("name", "projectName");
@@ -5786,13 +5783,13 @@ function modal_task_renderModal(taskObj) {
   modal_task_modal.showModal();
 }
 
-function editTask(topic, taskObj) {
+function modal_task_editTask(topic, taskObj) {
   isEdit = true;
   originalTask = taskObj;
   modal_task_renderModal(taskObj);
 }
 
-function modal_task_addTask(topic) {
+function modal_task_addTask() {
   isEdit = false;
   modal_task_renderModal(defaultTaskObject);
 }
@@ -5810,7 +5807,7 @@ function modal_task_sendFormData() {
 }
 
 pubsub.subscribe("/addTaskModal", modal_task_addTask);
-pubsub.subscribe("/editTaskModal", editTask);
+pubsub.subscribe("/editTaskModal", modal_task_editTask);
 pubsub.subscribe("/projectListUpdated", updateProjectList);
 
 /* harmony default export */ const modal_task = (modal_task_modal);
@@ -5820,7 +5817,7 @@ const circle_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" 
 ;// CONCATENATED MODULE: ./src/images/circle-check-solid.svg
 const circle_check_solid_namespaceObject = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d=\"M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM371.8 211.8C382.7 200.9 382.7 183.1 371.8 172.2C360.9 161.3 343.1 161.3 332.2 172.2L224 280.4L179.8 236.2C168.9 225.3 151.1 225.3 140.2 236.2C129.3 247.1 129.3 264.9 140.2 275.8L204.2 339.8C215.1 350.7 232.9 350.7 243.8 339.8L371.8 211.8z\"/></svg>";
 ;// CONCATENATED MODULE: ./src/scripts/ui/tasks.js
-
+/* eslint-disable no-use-before-define */
 
 
 
@@ -5848,9 +5845,9 @@ function createAddTaskButton() {
 }
 
 function createTaskListContainer() {
-  const taskList = document.createElement("ul");
-  taskList.id = "task-list";
-  return taskList;
+  const list = document.createElement("ul");
+  list.id = "task-list";
+  return list;
 }
 
 function createTasksContainer() {
@@ -5886,14 +5883,12 @@ function createTaskElement({ title, dueDate, priority, projectName, index }) {
   const elPriority = document.createElement("div");
   elPriority.classList.add("task-priority", priority.toLowerCase());
   elPriority.innerHTML = circle_solid_namespaceObject;
-  elPriority.addEventListener(
-    "mouseenter",
-    () => (elPriority.innerHTML = circle_check_solid_namespaceObject)
-  );
-  elPriority.addEventListener(
-    "mouseleave",
-    () => (elPriority.innerHTML = circle_solid_namespaceObject)
-  );
+  elPriority.addEventListener("mouseenter", () => {
+    elPriority.innerHTML = circle_check_solid_namespaceObject;
+  });
+  elPriority.addEventListener("mouseleave", () => {
+    elPriority.innerHTML = circle_solid_namespaceObject;
+  });
 
   /*
     TODO: Creating an anonymous function per element may not be the most efficient really
@@ -5944,15 +5939,16 @@ function setMainTitle(topic, text) {
 }
 
 function createMain() {
-  const main = document.createElement("div");
-  main.id = "main";
-  main.append(mainTitle, taskContainer);
-  return main;
+  const container = document.createElement("div");
+  container.id = "main";
+  container.append(mainTitle, taskContainer);
+  return container;
 }
 
 /* harmony default export */ const tasks = (tasks_main);
 
 ;// CONCATENATED MODULE: ./src/scripts/index.js
+/* eslint-disable no-unused-vars */
 
 
 
@@ -5978,4 +5974,4 @@ document
 
 /******/ })()
 ;
-//# sourceMappingURL=main_3fc7437e05fe8bdddb41.js.map
+//# sourceMappingURL=main_361cb451c25ea9d9baf6.js.map

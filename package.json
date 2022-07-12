@@ -21,19 +21,23 @@
   "devDependencies": {
     "css-loader": "^6.7.1",
     "css-minimizer-webpack-plugin": "^4.0.0",
-    "date-fns": "^2.28.0",
     "eslint": "^8.19.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "gh-pages": "^4.0.0",
     "html-loader": "^3.1.2",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
-    "modern-css-reset": "^1.4.0",
+    "prettier": "^2.7.1",
     "style-loader": "^3.3.1",
-    "tippy.js": "^6.3.7",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.2",
     "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "date-fns": "^2.28.0",
+    "modern-css-reset": "^1.4.0",
+    "tippy.js": "^6.3.7"
   }
 }

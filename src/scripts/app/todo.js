@@ -1,7 +1,7 @@
 // import Sherlock from "sherlockjs";
-import { endOfToday, add } from 'date-fns';
-import Project from './project';
-import PubSub from './pubsub';
+import { endOfToday, add } from "date-fns";
+import Project from "./project";
+import PubSub from "./pubsub";
 
 // Uses an object to prevent projects with the same name being added
 const projects = {};
@@ -9,7 +9,7 @@ let currentFilterTitle;
 let tasksFilterApplied;
 
 function publishTaskListUpdated() {
-  PubSub.publish('/taskListUpdated', tasksFilterApplied());
+  PubSub.publish("/taskListUpdated", tasksFilterApplied());
 }
 
 function removeTask(topic, { projectName, index }) {
@@ -22,7 +22,7 @@ function getProjectNames() {
 }
 
 function publishProjectListUpdated() {
-  PubSub.publish('/projectListUpdated', getProjectNames());
+  PubSub.publish("/projectListUpdated", getProjectNames());
 }
 
 function addProject(name, tasks) {
@@ -40,7 +40,7 @@ function getProject(name) {
 }
 
 function publishCurrentlySetFilter() {
-  PubSub.publish('/taskFilterUpdated', currentFilterTitle);
+  PubSub.publish("/taskFilterUpdated", currentFilterTitle);
 }
 
 function getTasksByProject(projectName) {
@@ -62,20 +62,21 @@ function getTasksDueToday() {
 function getTasksDueWithin7Days() {
   // Used with the Upcoming filter
   return getAllTasks().filter(
-    (task) => task.dueDate <= add(new Date(), { days: 7 }),
+    (task) => task.dueDate <= add(new Date(), { days: 7 })
   );
 }
 
-function setTaskFilter(filterValue, type = 'All Tasks') {
+// eslint-disable-next-line default-param-last
+function setTaskFilter(type = "All Tasks", filterValue) {
   // This will be called by a PubSub subscription and when we initialise the app
   currentFilterTitle = filterValue || type;
-  if (type === 'All Tasks') {
+  if (type === "All Tasks") {
     tasksFilterApplied = getAllTasks;
-  } else if (type === '/filterByProject') {
+  } else if (type === "/filterByProject") {
     tasksFilterApplied = () => getTasksByProject(filterValue);
-  } else if ((type === '/filterByPeriod') && (filterValue === 'Today')) {
+  } else if (type === "/filterByPeriod" && filterValue === "Today") {
     tasksFilterApplied = getTasksDueToday;
-  } else if ((type === '/filterByPeriod') && (filterValue === 'Upcoming')) {
+  } else if (type === "/filterByPeriod" && filterValue === "Upcoming") {
     tasksFilterApplied = getTasksDueWithin7Days;
   }
 
@@ -87,16 +88,14 @@ function removeProject(name) {
   delete projects[name];
 
   if (currentFilterTitle === name) {
-    currentFilterTitle = 'All Tasks';
+    currentFilterTitle = "All Tasks";
     setTaskFilter();
   }
   publishProjectListUpdated();
   publishTaskListUpdated();
 }
 
-function addTask({
-  projectName, title, dueDate, priority,
-}) {
+function addTask({ projectName, title, dueDate, priority }) {
   /* We render the task list based on the currently applied filter.
     If user adds a task that isn't within the current filter then they won't see it immediately. */
   addProject(projectName);
@@ -116,7 +115,7 @@ function editTask(topic, { originalTask, editedTask }) {
 /* Function that handles the unpacking of the args passed as
   part of the /addTask topic and passes then to the relevant function */
 function subscribeToCreateTask() {
-  PubSub.subscribe('/createTask', (topic, taskObj) => {
+  PubSub.subscribe("/createTask", (topic, taskObj) => {
     addTask(taskObj);
   });
 }
@@ -135,11 +134,11 @@ function toJSON() {
 }
 
 function saveToLocalStorage() {
-  localStorage.setItem('todo', toJSON());
+  localStorage.setItem("todo", toJSON());
 }
 
 function loadFromStorage() {
-  const json = JSON.parse(localStorage.getItem('todo'));
+  const json = JSON.parse(localStorage.getItem("todo"));
   json.projects.forEach((project) => {
     addProject(project.name, project.tasks);
   });
@@ -150,15 +149,19 @@ function init() {
   subscribeToCreateTask();
   setTaskFilter();
 
-  PubSub.subscribe('/filterByProject', setTaskFilter);
-  PubSub.subscribe('/filterByPeriod', setTaskFilter);
-  PubSub.subscribe('/completeTask', removeTask);
+  PubSub.subscribe("/filterByProject", setTaskFilter);
+  PubSub.subscribe("/filterByPeriod", setTaskFilter);
+  PubSub.subscribe("/completeTask", removeTask);
   publishProjectListUpdated();
-  PubSub.subscribe('/editTask', editTask);
-  PubSub.subscribe('/createProject', (topic, projectName) => addProject(projectName));
-  PubSub.subscribe('/removeProject', (topic, projectName) => removeProject(projectName));
+  PubSub.subscribe("/editTask", editTask);
+  PubSub.subscribe("/createProject", (topic, projectName) =>
+    addProject(projectName)
+  );
+  PubSub.subscribe("/removeProject", (topic, projectName) =>
+    removeProject(projectName)
+  );
 
-  window.addEventListener('beforeunload', saveToLocalStorage);
+  window.addEventListener("beforeunload", saveToLocalStorage);
 }
 
 export default {

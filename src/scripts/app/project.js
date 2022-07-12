@@ -3,10 +3,10 @@ import Task from "./task";
 export default function Project(name, taskList) {
   // We need to rebuild projects and their methods from data held in the LocalStorage
   // Tasks is an array of objects with the relevant properties
-  let _name = name;
-  let _tasks = processTasks(taskList);
+  const projectName = name;
+  const tasks = [];
 
-  function processTasks(taskList) {
+  function processTasks() {
     /*
     Primarily use to load tasks from local storage
     Expects an array with objects with properties:
@@ -18,38 +18,41 @@ export default function Project(name, taskList) {
       }
     ]
     */
-    if (!Array.isArray(taskList)) return [];
-
-    const list = [];
+    if (!Array.isArray(taskList)) return;
 
     taskList.forEach((task) =>
-      list.push(new Task(task.title, task.dueDate, task.priority))
+      tasks.push(new Task(task.title, task.dueDate, task.priority))
     );
-
-    return list;
   }
 
   function getName() {
-    return _name;
+    return name;
   }
 
   function getTasks() {
-    return _tasks;
+    return tasks;
   }
 
   function getTaskDetailsAll() {
-    return _tasks.map((task, index) =>
-      Object.assign({ projectName: _name, index }, task.getDetails())
-    );
+    return tasks.map((task, index) => {
+      const taskDetails = task.getDetails();
+      return {
+        projectName,
+        index,
+        ...taskDetails,
+      };
+    });
   }
 
   function addTask(title, dueDate, priority) {
-    _tasks.push(Task(title, dueDate, priority));
+    tasks.push(Task(title, dueDate, priority));
   }
 
   function removeTask(index) {
-    _tasks.splice(index, 1);
+    tasks.splice(index, 1);
   }
+
+  processTasks(taskList);
 
   return {
     getName,

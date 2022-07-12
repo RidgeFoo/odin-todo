@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
 
@@ -49,8 +50,7 @@ function createButtonElement({ type, className, text, funcEventListener }) {
 }
 
 function createModal() {
-  const modal = document.createElement("dialog");
-  return modal;
+  return document.createElement("dialog");
 }
 
 function getFormValidity() {
@@ -84,7 +84,7 @@ function renderPriorityDropDown(taskPriority = null) {
     option.setAttribute("value", priority);
     option.textContent = priority;
     // For editing task select the current priority level for the task
-    taskPriority === priority ? option.setAttribute("selected", "") : null;
+    if (taskPriority === priority) option.setAttribute("selected", "");
 
     priorities.appendChild(option);
   });
@@ -133,7 +133,7 @@ function createProjectListOption(project, currentProject = null) {
   option.textContent = project;
   if (currentProject === project) {
     option.setAttribute("selected", "");
-  } else if (!currentProject & (project === defaultProject)) {
+  } else if (!currentProject && project === defaultProject) {
     option.setAttribute("selected", "");
   }
 
@@ -153,7 +153,6 @@ function renderProjectDropDown(currentProject = null) {
   label.textContent = "Project";
   label.setAttribute("for", "projectName");
 
-  const defaultProject = "Inbox";
   const select = document.createElement("select");
   select.id = "project";
   select.setAttribute("name", "projectName");
@@ -210,7 +209,7 @@ function editTask(topic, taskObj) {
   renderModal(taskObj);
 }
 
-function addTask(topic) {
+function addTask() {
   isEdit = false;
   renderModal(defaultTaskObject);
 }

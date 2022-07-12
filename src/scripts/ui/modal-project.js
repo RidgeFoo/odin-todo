@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import PubSub from "../app/pubsub";
 
 const modal = renderModal();

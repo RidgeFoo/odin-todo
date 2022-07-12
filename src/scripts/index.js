@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import "modern-css-reset";
 import "../style.css";
 import "tippy.js/dist/tippy.css";

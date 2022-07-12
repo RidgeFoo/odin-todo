@@ -1,9 +1,9 @@
+/* eslint-disable no-use-before-define */
 import svgAdd from "../../images/plus-solid.svg";
 import svgCircle from "../../images/circle-solid.svg";
 import svgCircleCheck from "../../images/circle-check-solid.svg";
 import PubSub from "../app/pubsub";
 import { clearChildElements } from "./helpers";
-import { el } from "date-fns/locale";
 
 PubSub.subscribe("/taskListUpdated", renderTasks);
 PubSub.subscribe("/taskFilterUpdated", setMainTitle);
@@ -26,9 +26,9 @@ function createAddTaskButton() {
 }
 
 function createTaskListContainer() {
-  const taskList = document.createElement("ul");
-  taskList.id = "task-list";
-  return taskList;
+  const list = document.createElement("ul");
+  list.id = "task-list";
+  return list;
 }
 
 function createTasksContainer() {
@@ -64,14 +64,12 @@ function createTaskElement({ title, dueDate, priority, projectName, index }) {
   const elPriority = document.createElement("div");
   elPriority.classList.add("task-priority", priority.toLowerCase());
   elPriority.innerHTML = svgCircle;
-  elPriority.addEventListener(
-    "mouseenter",
-    () => (elPriority.innerHTML = svgCircleCheck)
-  );
-  elPriority.addEventListener(
-    "mouseleave",
-    () => (elPriority.innerHTML = svgCircle)
-  );
+  elPriority.addEventListener("mouseenter", () => {
+    elPriority.innerHTML = svgCircleCheck;
+  });
+  elPriority.addEventListener("mouseleave", () => {
+    elPriority.innerHTML = svgCircle;
+  });
 
   /*
     TODO: Creating an anonymous function per element may not be the most efficient really
@@ -122,10 +120,10 @@ function setMainTitle(topic, text) {
 }
 
 function createMain() {
-  const main = document.createElement("div");
-  main.id = "main";
-  main.append(mainTitle, taskContainer);
-  return main;
+  const container = document.createElement("div");
+  container.id = "main";
+  container.append(mainTitle, taskContainer);
+  return container;
 }
 
 export default main;

@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+import tippy from "tippy.js";
 import svgInbox from "../../images/inbox-solid.svg";
 import svgToday from "../../images/calendar-day-solid.svg";
 import svgUpcoming from "../../images/calendar-days-solid.svg";
@@ -6,10 +8,8 @@ import svgChevronRight from "../../images/chevron-right-solid.svg";
 import svgAdd from "../../images/plus-solid.svg";
 import svgTrash from "../../images/trash-can-solid.svg";
 import PubSub from "../app/pubsub";
-import { clearChildElements } from "./helpers";
-import tippy from "tippy.js";
+import { clearChildElements, getSvgElement } from "./helpers";
 import { showModal as showProjectModal } from "./modal-project";
-import { getSvgElement } from "./helpers";
 
 const quickFilters = [
   { name: "Inbox", svg: svgInbox, topic: "/filterByProject" },
@@ -74,16 +74,16 @@ function createNav() {
 }
 
 function createQuickFilterContainer() {
-  const quickFilterContainer = document.createElement("div");
-  quickFilterContainer.id = "quick-filters";
+  const container = document.createElement("div");
+  container.id = "quick-filters";
 
   quickFilters.forEach((filter) =>
-    quickFilterContainer.appendChild(
+    container.appendChild(
       createQuickFilter(filter.name, filter.svg, filter.topic)
     )
   );
 
-  return quickFilterContainer;
+  return container;
 }
 
 function createQuickFilter(name, svg, topic) {
@@ -160,9 +160,11 @@ function toggleProjectsDropDown() {
   PubSub.publish("/toggleStorageValue", "displayProjects");
   const displayProjects = getProjectToggleStatus();
   dropDownChevronContainer.replaceChildren(getDropDownChevron(displayProjects));
-  displayProjects
-    ? projectList.classList.remove("hidden")
-    : projectList.classList.add("hidden");
+  if (displayProjects) {
+    projectList.classList.remove("hidden");
+  } else {
+    projectList.classList.add("hidden");
+  }
 }
 
 function getProjectToggleStatus() {

@@ -1,13 +1,7 @@
+import tippy from "tippy.js";
+import pubsub from "../app/pubsub";
 import svgCheck from "../../images/check-solid.svg";
 import svgPlus from "../../images/plus-solid.svg";
-import pubsub from "../app/pubsub.js";
-import tippy from "tippy.js";
-
-function createHeader() {
-  const header = document.createElement("header");
-  header.append(createLogo(), createAddTask());
-  return header;
-}
 
 function createLogo() {
   const logoContainer = document.createElement("div");
@@ -30,6 +24,12 @@ function createAddTask() {
 
   btnAddTask.addEventListener("click", () => pubsub.publish("/addTaskModal"));
   return btnAddTask;
+}
+
+function createHeader() {
+  const header = document.createElement("header");
+  header.append(createLogo(), createAddTask());
+  return header;
 }
 
 export default createHeader();

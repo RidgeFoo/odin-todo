@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
   entry: "./src/scripts/index.js",
@@ -35,5 +36,6 @@ module.exports = {
       template: path.resolve(__dirname, "src", "index.html"),
     }),
     new MiniCssExtractPlugin(),
+    new ESLintPlugin(),
   ],
 };

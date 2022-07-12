@@ -1,58 +1,46 @@
 // import Sherlock from "sherlockjs";
-import Project from "./project";
-import PubSub from "./pubsub";
-import { endOfToday, add } from "date-fns";
+import { endOfToday, add } from 'date-fns';
+import Project from './project';
+import PubSub from './pubsub';
 
 // Uses an object to prevent projects with the same name being added
-const _projects = {};
-let _currentFilterTitle;
-let _tasksFilterApplied; // could this reference a function that we use as a callback when rendering tasks???
+const projects = {};
+let currentFilterTitle;
+let tasksFilterApplied;
 
-function addProject(name, tasks) {
-  if (name in _projects) return;
-  _projects[name] = Project(name, tasks);
-  _publishProjectListUpdated();
+function publishTaskListUpdated() {
+  PubSub.publish('/taskListUpdated', tasksFilterApplied());
 }
 
-function getProjectsAll() {
-  return _projects;
+function removeTask(topic, { projectName, index }) {
+  projects[projectName].removeTask(index);
+  publishTaskListUpdated();
 }
 
 function getProjectNames() {
-  return Object.keys(_projects);
+  return Object.keys(projects);
+}
+
+function publishProjectListUpdated() {
+  PubSub.publish('/projectListUpdated', getProjectNames());
+}
+
+function addProject(name, tasks) {
+  if (name in projects) return;
+  projects[name] = Project(name, tasks);
+  publishProjectListUpdated();
+}
+
+function getProjectsAll() {
+  return projects;
 }
 
 function getProject(name) {
-  return _projects[name];
+  return projects[name];
 }
 
-function removeProject(name) {
-  delete _projects[name];
-
-  if (_currentFilterTitle === name) {
-    _currentFilterTitle = "All Tasks";
-    _setTaskFilter();
-  }
-  _publishProjectListUpdated();
-  _publishTaskListUpdated();
-}
-
-function addTask({ projectName, title, dueDate, priority }) {
-  /* We render the task list based on the currently applied filter.
-    If user adds a task that isn't within the current filter then they won't see it immediately.*/
-  addProject(projectName);
-  const project = getProject(projectName);
-  const task = project.addTask(title, dueDate, priority);
-  _publishTaskListUpdated();
-  return task;
-}
-
-function _editTask(topic, { originalTask, editedTask }) {
-  removeTask(null, {
-    projectName: originalTask.projectName,
-    index: originalTask.index,
-  });
-  addTask(editedTask);
+function publishCurrentlySetFilter() {
+  PubSub.publish('/taskFilterUpdated', currentFilterTitle);
 }
 
 function getTasksByProject(projectName) {
@@ -61,108 +49,116 @@ function getTasksByProject(projectName) {
 
 function getAllTasks() {
   // Gets tasks from all projects
-  return Object.values(_projects)
+  return Object.values(projects)
     .map((project) => project.getTaskDetailsAll())
     .flat();
 }
 
-function removeTask(topic, { projectName, index }) {
-  _projects[projectName].removeTask(index);
-  _publishTaskListUpdated();
-}
-
-/* Function that handles the unpacking of the args passed as
-  part of the /addTask topic and passes then to the relevant function */
-function _subscribeToCreateTask() {
-  PubSub.subscribe("/createTask", (topic, taskObj) => {
-    addTask(taskObj);
-  });
-}
-
-function _setTaskFilter(type = "All Tasks", filterValue) {
-  // This will be called by a PubSub subscription and when we initialise the app
-  _currentFilterTitle = filterValue || type;
-  if (type === "All Tasks") {
-    _tasksFilterApplied = getAllTasks;
-  } else if (type === "/filterByProject") {
-    _tasksFilterApplied = () => getTasksByProject(filterValue);
-  } else if ((type === "/filterByPeriod") & (filterValue === "Today")) {
-    _tasksFilterApplied = _getTasksDueToday;
-  } else if ((type === "/filterByPeriod") & (filterValue === "Upcoming")) {
-    _tasksFilterApplied = _getTasksDueWithin7Days;
-  }
-
-  _publishTaskListUpdated();
-  _publishCurrentlySetFilter();
-}
-
-function _publishTaskListUpdated() {
-  PubSub.publish("/taskListUpdated", _tasksFilterApplied());
-}
-
-function _publishProjectListUpdated() {
-  PubSub.publish("/projectListUpdated", getProjectNames());
-}
-
-function _publishCurrentlySetFilter() {
-  PubSub.publish("/taskFilterUpdated", _currentFilterTitle);
-}
-
-function _getTasksDueToday() {
+function getTasksDueToday() {
   // Get tasks due today and in the past that are not complete
   return getAllTasks().filter((task) => task.dueDate <= endOfToday());
 }
 
-function _getTasksDueWithin7Days() {
+function getTasksDueWithin7Days() {
   // Used with the Upcoming filter
   return getAllTasks().filter(
-    (task) => task.dueDate <= add(new Date(), { days: 7 })
+    (task) => task.dueDate <= add(new Date(), { days: 7 }),
   );
+}
+
+function setTaskFilter(filterValue, type = 'All Tasks') {
+  // This will be called by a PubSub subscription and when we initialise the app
+  currentFilterTitle = filterValue || type;
+  if (type === 'All Tasks') {
+    tasksFilterApplied = getAllTasks;
+  } else if (type === '/filterByProject') {
+    tasksFilterApplied = () => getTasksByProject(filterValue);
+  } else if ((type === '/filterByPeriod') && (filterValue === 'Today')) {
+    tasksFilterApplied = getTasksDueToday;
+  } else if ((type === '/filterByPeriod') && (filterValue === 'Upcoming')) {
+    tasksFilterApplied = getTasksDueWithin7Days;
+  }
+
+  publishTaskListUpdated();
+  publishCurrentlySetFilter();
+}
+
+function removeProject(name) {
+  delete projects[name];
+
+  if (currentFilterTitle === name) {
+    currentFilterTitle = 'All Tasks';
+    setTaskFilter();
+  }
+  publishProjectListUpdated();
+  publishTaskListUpdated();
+}
+
+function addTask({
+  projectName, title, dueDate, priority,
+}) {
+  /* We render the task list based on the currently applied filter.
+    If user adds a task that isn't within the current filter then they won't see it immediately. */
+  addProject(projectName);
+  const project = getProject(projectName);
+  const task = project.addTask(title, dueDate, priority);
+  publishTaskListUpdated();
+  return task;
+}
+
+function editTask(topic, { originalTask, editedTask }) {
+  removeTask(null, {
+    projectName: originalTask.projectName,
+    index: originalTask.index,
+  });
+  addTask(editedTask);
+}
+/* Function that handles the unpacking of the args passed as
+  part of the /addTask topic and passes then to the relevant function */
+function subscribeToCreateTask() {
+  PubSub.subscribe('/createTask', (topic, taskObj) => {
+    addTask(taskObj);
+  });
 }
 
 function toJSON() {
   const todoObj = { projects: [] };
-  for (const key in _projects) {
+
+  Object.keys(projects).forEach((key) => {
     const projectObj = {
       name: key,
-      tasks: _projects[key].getTasks().map((task) => task.getDetails()),
+      tasks: projects[key].getTasks().map((task) => task.getDetails()),
     };
     todoObj.projects.push(projectObj);
-  }
+  });
   return JSON.stringify(todoObj);
 }
 
 function saveToLocalStorage() {
-  localStorage.setItem("todo", toJSON());
+  localStorage.setItem('todo', toJSON());
 }
 
 function loadFromStorage() {
-  // if (!localStorage.getItem("todo")) return;
-
-  const projects = JSON.parse(localStorage.getItem("todo")).projects;
-  projects.forEach((project) => {
+  const json = JSON.parse(localStorage.getItem('todo'));
+  json.projects.forEach((project) => {
     addProject(project.name, project.tasks);
   });
 }
 
 function init() {
   loadFromStorage();
-  _subscribeToCreateTask();
-  _setTaskFilter();
+  subscribeToCreateTask();
+  setTaskFilter();
 
-  PubSub.subscribe("/filterByProject", _setTaskFilter);
-  PubSub.subscribe("/filterByPeriod", _setTaskFilter);
-  PubSub.subscribe("/completeTask", removeTask);
-  _publishProjectListUpdated();
-  PubSub.subscribe("/editTask", _editTask);
-  PubSub.subscribe("/createProject", (topic, projectName) =>
-    addProject(projectName)
-  );
-  PubSub.subscribe("/removeProject", (topic, projectName) =>
-    removeProject(projectName)
-  );
+  PubSub.subscribe('/filterByProject', setTaskFilter);
+  PubSub.subscribe('/filterByPeriod', setTaskFilter);
+  PubSub.subscribe('/completeTask', removeTask);
+  publishProjectListUpdated();
+  PubSub.subscribe('/editTask', editTask);
+  PubSub.subscribe('/createProject', (topic, projectName) => addProject(projectName));
+  PubSub.subscribe('/removeProject', (topic, projectName) => removeProject(projectName));
 
-  window.addEventListener("beforeunload", saveToLocalStorage);
+  window.addEventListener('beforeunload', saveToLocalStorage);
 }
 
 export default {

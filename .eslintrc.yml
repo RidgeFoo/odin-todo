@@ -10,3 +10,4 @@ parserOptions:
 rules: {}
 ignorePatterns:
   - webpack.*
+  - dist/*
